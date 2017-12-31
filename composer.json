@@ -9,7 +9,7 @@
     "psr-4": {
     },
     "files": [
-      "slug.php"
+      "src/slug.php"
     ]
   },
   "license": "MIT",

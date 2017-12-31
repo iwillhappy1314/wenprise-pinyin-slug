@@ -1,10 +1,6 @@
 <?php
-/**
- * 转换 slug 和文件名称为汉语拼音
- */
 
 use Overtrue\Pinyin\Pinyin;
-
 
 add_filter( 'name_save_pre', function ( $slug ) {
 
