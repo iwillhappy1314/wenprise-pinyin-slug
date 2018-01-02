@@ -70,6 +70,3 @@ add_filter( 'sanitize_file_name', function ( $filename ) {
 	return $filename;
 
 }, 0 );
-
-
-
