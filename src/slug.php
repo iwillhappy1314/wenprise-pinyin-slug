@@ -9,10 +9,8 @@ add_filter( 'name_save_pre', function ( $slug ) {
 		return $slug;
 	}
 
-	$pinyin = new Pinyin();
-
 	// 替换文章标题
-	$title = $pinyin->permalink( $_POST[ 'post_title' ] );
+	$title = wprs_slug_convert( $_POST[ 'post_title' ] );
 
 	return sanitize_title( $title );
 }, 0 );
@@ -32,10 +30,8 @@ add_filter( 'pre_category_nicename', function ( $slug ) {
 		return $slug;
 	}
 
-	$pinyin = new Pinyin();
-
 	// 替换文章标题
-	$title = $pinyin->permalink( $_POST[ 'tag-name' ] );
+	$title = wprs_slug_convert( $_POST[ 'tag-name' ] );
 
 	return sanitize_title( $title );
 }, 0 );
@@ -51,8 +47,6 @@ add_filter( 'pre_category_nicename', function ( $slug ) {
 add_filter( 'sanitize_file_name', function ( $filename ) {
 
 	// 手动编辑时，不自动转换为拼音
-	$pinyin = new Pinyin();
-
 	$parts     = explode( '.', $filename );
 	$filename  = array_shift( $parts );
 	$extension = array_pop( $parts );
@@ -62,7 +56,7 @@ add_filter( 'sanitize_file_name', function ( $filename ) {
 	}
 
 	if ( preg_match( '/[\x{4e00}-\x{9fa5}]+/u', $filename ) ) {
-		$filename = $pinyin->permalink( $filename );
+		$filename = wprs_slug_convert( $filename );
 	}
 
 	$filename .= '.' . $extension;
@@ -70,3 +64,30 @@ add_filter( 'sanitize_file_name', function ( $filename ) {
 	return $filename;
 
 }, 0 );
+
+
+/**
+ * 转换拼音的通用功能
+ *
+ * @param $name
+ *
+ * @return string 转换后的拼音
+ */
+if ( ! function_exists( 'wprs_slug_convert' ) ) {
+	function wprs_slug_convert( $name ) {
+
+		$divider = wprs_plugin_get_option( 'wprs_pinyin_slug', 'divider', '-' );
+		$type    = wprs_plugin_get_option( 'wprs_pinyin_slug', 'type', '0' );
+
+		$pinyin = new Pinyin();
+
+		if ( (int) $type === 0 ) {
+			$slug = $pinyin->permalink( $name, $divider );
+		} else {
+			$slug = $pinyin->abbr( $name, $divider );
+		}
+
+		return $slug;
+
+	}
+}

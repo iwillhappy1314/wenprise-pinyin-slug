@@ -4,7 +4,7 @@ Donate link: https://www.wpzhiku.com/
 Tags: slug, pinyin, 别名, 中文字符
 Requires at least: 3.4
 Tested up to: 4.9
-Stable tag: 1.0
+Stable tag: 1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -51,6 +51,9 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 == Changelog ==
 
+= 1.1 =
+* 增加转换方式设置，全拼或每个字的第一个字母
+* 增加拼音分隔符设置，默认为 "-"
 
 = 1.0 =
 * 第一个版本，支持文章别名、分类项目别名、和图片文件名的自动转换。
