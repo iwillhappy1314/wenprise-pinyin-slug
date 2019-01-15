@@ -1,21 +1,22 @@
-﻿=== Plugin Name ===
+﻿# Plugin Name #
 Contributors: iwillhappy1314
 Donate link: https://www.wpzhiku.com/
 Tags: slug, pinyin, 别名, 中文字符
 Requires at least: 3.4
-Tested up to: 4.9
-Stable tag: 1.1
+Requires PHP: 5.6.0
+Tested up to: 5.0
+Stable tag: 1.1.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 自动转换 WordPress 中的中文文章别名、分类项目别名、图片文件名称为汉语拼音。
 
-== Description ==
+## Description ##
 
 自动转换 WordPress 中的中文文章别名、分类项目别名、图片文件名称为汉语拼音。
 
 
-= 这个插件是干什么用的？=
+### 这个插件是干什么用的？###
 
 在 WordPress 中添加内容时，自动转换下面几项内容为拼音。
 
@@ -25,35 +26,44 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 当上面内容内英文时，保持原样。
 
-= 为什么需要这个插件？ =
+### 为什么需要这个插件？###
 
 当 URL 中出现中文时，中文部分会被自动转码，不知道的人看起来就是一团乱码，缺乏可读性。虽然有些浏览器可以在地址栏中显示中文，复制分享给别人的时候，URL 中文部分显示的也是被转码后的代码。
 
 不同的操作系统环境，FTP 传输工具使用的文件名编码不同，迁移服务器时，如果文件名编码发生了变换，中文文件名很可能会变成乱码，导致文件不能访问。
 
-= 什么情况下使用这个插件？ =
+### 什么情况下使用这个插件？ ###
 
 如果你的站点是给客户用的，建议使用这个插件，因为他们很可能不会意识到在 URL 和文件名中使用中文的问题。此插件可以自动帮他们处理。
 
 如果站点是你自己用的，并且你是一个细心的人，发布内容时，会手动编辑别名和文件名，这个插件对你来说就是多余的。不需要安装。
 
 
-== Installation ==
+## Installation ##
 
 1. 上传插件到`/wp-content/plugins/` 目录，或在 WordPress 安装插件界面搜索 "Wenprise Pinyin Slug"，点击安装。
 2. 在插件管理菜单激活插件
 
-== Frequently Asked Questions ==
+## Frequently Asked Questions ##
+
+### 插件支持繁体中文吗？ ###
+
+经测试，插件是支持繁体中文的。
 
 
-== Screenshots ==
+## Screenshots ##
 
 
-== Changelog ==
+## Changelog ##
 
-= 1.1 =
-* 增加转换方式设置，全拼或每个字的第一个字母
-* 增加拼音分隔符设置，默认为 "-"
+### 1.1.3 ###
+* 添加 PHP 版本检查
+
+### 1.1.2 ###
+* 解决更新分类时，别名不能转拼音的 Bug
+
+### 1.1 ###
+* 增加设置项，可以设置是否启用分隔符、分隔符样式以及转换方式，全拼或者第一个字母
 
 = 1.0 =
 * 第一个版本，支持文章别名、分类项目别名、和图片文件名的自动转换。
