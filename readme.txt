@@ -5,7 +5,7 @@ Tags: slug, pinyin, 别名, 中文字符
 Requires at least: 3.4
 Requires PHP: 5.6.0
 Tested up to: 5.0
-Stable tag: 1.1.3
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -24,7 +24,7 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 * 分类项目别名
 * 图片文件名
 
-当上面内容内英文时，保持原样。
+当上面内容内英文，或手动设置了中文别名时，保持原样。
 
 ### 为什么需要这个插件？###
 
@@ -55,6 +55,9 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 
 ## Changelog ##
+
+### 1.2 ###
+* 增加转换别名字符长度限制
 
 ### 1.1.3 ###
 * 添加 PHP 版本检查
