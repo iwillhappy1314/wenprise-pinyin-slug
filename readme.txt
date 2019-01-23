@@ -53,6 +53,9 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 ## Screenshots ##
 
+1. 文章别名自动转换
+2. 分类别名自动转换
+3. 文件名自动转换
 
 ## Changelog ##
 
