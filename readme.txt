@@ -5,7 +5,7 @@ Tags: slug, pinyin,别名,中文字符,Pinyin Attachment Name,Pinyin Slugs,Pinyi
 Requires at least: 3.4
 Requires PHP: 5.6.0
 Tested up to: 5.0
-Stable tag: 1.2.1
+Stable tag: 1.2.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -15,16 +15,15 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 自动转换 WordPress 中的中文文章别名、分类项目别名、图片文件名称为汉语拼音。
 
+### 插件的主要功能 ###
 
-### 这个插件是干什么用的？###
-
-在 WordPress 中添加内容时，自动转换下面几项内容为拼音。
-
-* 文章别名
-* 分类项目别名
-* 图片文件名
-
-当上面内容内英文，或手动设置了中文别名时，保持原样。
+* 转换文章别名为拼音，支持快速编辑时转换
+* 转换分类目录、标签或自定义分类法别名为拼音，支持快速编辑
+* 当上面内容内英文，或手动设置了中文别名时，保持原样。
+* 转换中文图片名为拼音
+* 支持自定义转换方式为全拼或第一个字母
+* 支持设置拼音之间的间隔
+* 支持截取转换后的拼音长度
 
 ### 为什么需要这个插件？###
 
@@ -58,6 +57,12 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 3. 文件名自动转换
 
 ## Changelog ##
+
+### 1.2.2 ###
+* 长度限制默认设置为空，为空时，不截取转换后的别名
+
+### 1.2.1 ###
+* Bugfix
 
 ### 1.2 ###
 * 增加转换别名字符长度限制

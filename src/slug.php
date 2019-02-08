@@ -151,7 +151,7 @@ if ( ! function_exists('wprs_slug_convert')) {
 
         $divider = wprs_plugin_get_option('wprs_pinyin_slug', 'divider', '-');
         $type    = wprs_plugin_get_option('wprs_pinyin_slug', 'type', 0);
-        $length  = wprs_plugin_get_option('wprs_pinyin_slug', 'length', 50);
+        $length  = wprs_plugin_get_option('wprs_pinyin_slug', 'length', '');
 
         $pinyin = new Pinyin();
 
@@ -182,13 +182,14 @@ if ( ! function_exists('wprs_slug_convert')) {
 if ( ! function_exists('wprs_trim_slug')) {
     function wprs_trim_slug($input, $length, $divider = '-', $strip_html = true)
     {
+
         // strip tags, if desired
         if ($strip_html) {
             $input = strip_tags($input);
         }
 
         // no need to trim, already shorter than trim length
-        if (strlen($input) <= $length) {
+        if (strlen($input) <= $length || !$length || $length == '') {
             return $input;
         }
 
