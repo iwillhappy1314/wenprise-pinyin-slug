@@ -4,7 +4,7 @@ Donate link: https://www.wpzhiku.com/
 Tags: slug, pinyin,别名,中文字符,Pinyin Attachment Name,Pinyin Slugs,Pinyin SEO,Pinyin Permalinks
 Requires at least: 3.4
 Requires PHP: 5.6.0
-Tested up to: 5.0
+Tested up to: 5.1
 Stable tag: 1.3.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
