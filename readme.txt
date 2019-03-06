@@ -5,7 +5,7 @@ Tags: slug, pinyin,别名,中文字符,Pinyin Attachment Name,Pinyin Slugs,Pinyi
 Requires at least: 3.4
 Requires PHP: 5.6.0
 Tested up to: 5.0
-Stable tag: 1.2.2
+Stable tag: 1.3.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -24,6 +24,7 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 * 支持自定义转换方式为全拼或第一个字母
 * 支持设置拼音之间的间隔字符
 * 支持截取转换后的拼音为设置的长度
+* 支持古腾堡编辑器
 
 ### 为什么需要这个插件？###
 
@@ -57,6 +58,9 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 3. 文件名自动转换
 
 ## Changelog ##
+
+### 1.3.0 ###
+* 支持古腾堡编辑器
 
 ### 1.2.2 ###
 * 长度限制默认设置为空，为空时，不截取转换后的别名
