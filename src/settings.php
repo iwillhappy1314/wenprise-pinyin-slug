@@ -32,7 +32,7 @@ if ( ! class_exists('Wenprise_Pinyin_Slug_Settings')):
 
         function admin_menu()
         {
-            add_options_page('别名转拼音', '别名转拼音', 'delete_posts', 'settings_api_test', [$this, 'plugin_page']);
+            add_options_page('别名转拼音', '别名转拼音', 'delete_posts', 'wenprise_pinyin_slug', [$this, 'plugin_page']);
         }
 
         function get_settings_sections()

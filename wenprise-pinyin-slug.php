@@ -3,7 +3,7 @@
 Plugin Name:        Wenprise Pinyin Slug
 Plugin URI:         https://www.wpzhiku.com/wenprise-pinyin-slug/
 Description:        自动转换 WordPress 中的中文文章别名、分类项目别名、图片文件名称为汉语拼音。
-Version:            1.3.0
+Version:            1.3.1
 Author:             WordPress 智库
 Author URI:         https://www.wpzhiku.com/
 License:            MIT License
@@ -25,4 +25,13 @@ if (version_compare(phpversion(), '5.6.0', '<')) {
     return;
 }
 
-require_once( plugin_dir_path( __FILE__ ) . 'vendor/autoload.php' );
+add_filter('plugin_action_links_' . plugin_basename(__FILE__), function ($links)
+{
+    $url = admin_url('options-general.php?page=wenprise_pinyin_slug');
+    $url = '<a href="' . esc_url($url) . '">' . __('设置') . '</a>';
+    array_unshift($links, $url);
+
+    return $links;
+});
+
+require_once(plugin_dir_path(__FILE__) . 'vendor/autoload.php');
