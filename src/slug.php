@@ -56,24 +56,29 @@ function wprs_rest_convert_slug($prepared_post, $request)
         }
     }
 
+
     // 1. 已发布状态下，如果设置了 slug，说明编辑了 slug，
     // 1.1 如果 slug 为空，说明删除了 slug 需要重新生成
     // 1.2 如果 slug 不为空，说明手动设置了 slug, 使用设置的 slug, 不自动生成
     if ($request[ 'status' ] == 'publish') {
-        if (isset($request[ 'slug' ]) && $request[ 'slug' ] == '') {
+
+        if (isset($request[ 'slug' ]) && empty($request[ 'slug' ])) {
             $prepared_post->post_name = wprs_slug_convert($post_title);
         }
+
     } else {
 
         // 如果上一个状态是已发布，说明执行的是 "切换到草稿" 的操作，这种情况下，不自动转换 slug
         if ( ! $saved_post || $saved_post->post_status != 'publish') {
             // 2. 其他状态下，如果没有设置 slug, 或 slug 为空，自动生成，如果设置了 slug ,依然不自动生成
-            if ( ! isset($request[ 'slug' ]) || $request[ 'slug' ] == '') {
+            if ( ! isset($request[ 'slug' ]) || empty($request[ 'slug' ])) {
                 $prepared_post->post_name = wprs_slug_convert($post_title);
             }
         }
 
     }
+
+    print_r(json_decode($prepared_post));
 
     return $prepared_post;
 }
@@ -210,6 +215,29 @@ if ( ! function_exists('wprs_plugin_get_option')) {
 if ( ! function_exists('wprs_slug_convert')) {
     function wprs_slug_convert($name)
     {
+        $translator_api = wprs_plugin_get_option('wprs_pinyin_slug', 'translator_api', 0);
+
+        if ($translator_api == 1) {
+            $slug = wprs_slug_translator($name);
+        } else {
+            $slug = wprs_slug_pinyin_convert($name);
+        }
+
+        return $slug;
+    }
+}
+
+
+if ( ! function_exists('wprs_slug_pinyin_convert')) {
+    /**
+     * 拼音转换方式
+     *
+     * @param $name
+     *
+     * @return bool|string
+     */
+    function wprs_slug_pinyin_convert($name)
+    {
 
         $divider = wprs_plugin_get_option('wprs_pinyin_slug', 'divider', '-');
         $type    = wprs_plugin_get_option('wprs_pinyin_slug', 'type', 0);
@@ -231,13 +259,87 @@ if ( ! function_exists('wprs_slug_convert')) {
 }
 
 
+if ( ! function_exists('wprs_slug_translator')) {
+    /**
+     * 百度翻译转换方式
+     *
+     * @param $name
+     *
+     * @return string
+     */
+    function wprs_slug_translator($name)
+    {
+        $length = wprs_plugin_get_option('wprs_pinyin_slug', 'length', '');
+
+        $api_url  = 'https://fanyi-api.baidu.com/api/trans/vip/translate';
+        $app_id   = wprs_plugin_get_option('wprs_pinyin_slug', 'baidu_app_id', false);
+        $app_key  = wprs_plugin_get_option('wprs_pinyin_slug', 'baidu_api_key', false);
+        $app_salt = rand(10000, 99999);
+
+        if ( ! $app_id || ! $app_key) {
+
+            $result = false;
+
+        } else {
+
+            // 签名
+            $str  = $app_id . $name . $app_salt . $app_key;
+            $sign = md5($str);
+
+            // 请求数据
+            $args = [
+                'q'     => $name,
+                'from'  => 'auto',
+                'to'    => 'en',
+                'appid' => $app_id,
+                'salt'  => $app_salt,
+                'sign'  => $sign,
+            ];
+
+            // 发送请求
+            $response = wp_remote_post($api_url, [
+                    'method'      => 'POST',
+                    'timeout'     => 45,
+                    'redirection' => 5,
+                    'httpversion' => '1.0',
+                    'blocking'    => true,
+                    'headers'     => [],
+                    'body'        => $args,
+                    'cookies'     => [],
+                ]
+            );
+
+            // 获取返回数据
+            if (is_wp_error($response)) {
+                $result = false;
+            } else {
+                $data = json_decode(wp_remote_retrieve_body($response));
+
+                if ( ! $data->error_code) {
+                    $result = sanitize_title($data->trans_result[ 0 ]->dst);
+                    $result = wprs_trim_slug($result, $length);
+                } else {
+                    $result = false;
+                }
+            }
+        }
+
+        if ( ! $result) {
+            $result = wprs_slug_pinyin_convert($name);
+        }
+
+        return $result;
+    }
+}
+
+
 /**
  * 裁剪文本
  *
- * @param      $input
- * @param      $length
- * @param bool $divider
- * @param bool $strip_html
+ * @param        $input
+ * @param        $length
+ * @param string $divider
+ * @param bool   $strip_html
  *
  * @return bool|string
  */
