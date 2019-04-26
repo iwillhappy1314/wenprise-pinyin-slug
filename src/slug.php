@@ -28,6 +28,7 @@ add_filter('name_save_pre', function ($slug)
 add_filter('rest_pre_insert_post', 'wprs_rest_convert_slug', 10, 2);
 add_filter('rest_pre_insert_page', 'wprs_rest_convert_slug', 10, 2);
 
+
 /**
  * Rest Api 中，文章别名保存之前，如果没有设置，自动转换为拼音
  *
@@ -56,14 +57,18 @@ function wprs_rest_convert_slug($prepared_post, $request)
         }
     }
 
-
     // 1. 已发布状态下，如果设置了 slug，说明编辑了 slug，
     // 1.1 如果 slug 为空，说明删除了 slug 需要重新生成
     // 1.2 如果 slug 不为空，说明手动设置了 slug, 使用设置的 slug, 不自动生成
     if ($request[ 'status' ] == 'publish') {
 
-        if (isset($request[ 'slug' ]) && empty($request[ 'slug' ])) {
-            $prepared_post->post_name = wprs_slug_convert($post_title);
+        // 不处理已保存、且文章已有 slug 的情况，避免编辑时修改掉原有中文 slug
+        if ($saved_post && $saved_post->post_name == '') {
+
+            if ( ! isset($request[ 'slug' ]) || empty($request[ 'slug' ]) || $request[ 'slug' ] == '') {
+                $prepared_post->post_name = wprs_slug_convert($post_title);
+            }
+
         }
 
     } else {
@@ -77,8 +82,6 @@ function wprs_rest_convert_slug($prepared_post, $request)
         }
 
     }
-
-    print_r(json_decode($prepared_post));
 
     return $prepared_post;
 }

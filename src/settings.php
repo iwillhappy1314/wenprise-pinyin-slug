@@ -17,8 +17,29 @@ if ( ! class_exists('Wenprise_Pinyin_Slug_Settings')):
 
             add_action('admin_init', [$this, 'admin_init']);
             add_action('admin_menu', [$this, 'admin_menu']);
+            add_action('admin_enqueue_scripts', [$this, 'enqueue_scripts']);
         }
 
+
+        /**
+         * 加载 JS
+         *
+         * @param $hook
+         */
+        function enqueue_scripts($hook)
+        {
+
+            if ($hook != 'settings_page_wenprise_pinyin_slug') {
+                return;
+            }
+
+            wp_enqueue_script('my_custom_script', plugin_dir_url(__FILE__) . 'scripts.js');
+        }
+
+
+        /**
+         * 初始化
+         */
         function admin_init()
         {
 
@@ -30,6 +51,10 @@ if ( ! class_exists('Wenprise_Pinyin_Slug_Settings')):
             $this->settings_api->admin_init();
         }
 
+
+        /**
+         * 添加设置菜单
+         */
         function admin_menu()
         {
             add_options_page('别名转拼音|英文', '别名转拼音|英文', 'delete_posts', 'wenprise_pinyin_slug', [$this, 'plugin_page']);
@@ -46,6 +71,7 @@ if ( ! class_exists('Wenprise_Pinyin_Slug_Settings')):
 
             return $sections;
         }
+
 
         /**
          * 设置字段
@@ -73,7 +99,7 @@ if ( ! class_exists('Wenprise_Pinyin_Slug_Settings')):
                         'label'             => __('拼音分隔分隔符', 'wprs'),
                         'desc'              => __('可以是：_ 或 - 或 . &nbsp; 默认为 “-”，如过不需要分隔符，请留空', 'wprs'),
                         'placeholder'       => __('-', 'wprs'),
-                        'default'           => '-',
+                        'default'           => '',
                         'type'              => 'text',
                         'sanitize_callback' => 'sanitize_text_field',
                     ],
@@ -120,6 +146,10 @@ if ( ! class_exists('Wenprise_Pinyin_Slug_Settings')):
             return $settings_fields;
         }
 
+
+        /**
+         * 插件设置页面
+         */
         function plugin_page()
         {
             echo '<div class="wrap">';
