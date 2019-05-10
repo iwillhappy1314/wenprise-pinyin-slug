@@ -1,29 +1,29 @@
 ﻿# Plugin Name #
 Contributors: iwillhappy1314
 Donate link: https://www.wpzhiku.com/
-Tags: slug, pinyin,别名,中文字符,Pinyin Attachment Name,Pinyin Slugs,Pinyin SEO,Pinyin Permalinks
+Tags: slug, pinyin,别名,中文字符,Pinyin Attachment Name,Pinyin Slugs,Pinyin SEO,Pinyin Permalinks,gutenberg, blocks
 Requires at least: 3.4
 Requires PHP: 5.6.0
 Tested up to: 5.1
-Stable tag: 1.3.1
+Stable tag: 1.4.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-自动转换 WordPress 中的中文文章别名、分类项目别名、图片文件名称为汉语拼音。
+自动转换 WordPress 中的中文文章别名、分类项目别名、图片文件名称为汉语拼音或英文翻译。
 
 ## Description ##
 
-自动转换 WordPress 中的中文文章别名、分类项目别名、图片文件名称为汉语拼音。
+自动转换 WordPress 中的中文文章别名、分类项目别名、图片文件名称为汉语拼音或英文翻译。
 
 ### 插件的主要功能 ###
 
-* 转换文章别名为拼音，支持快速编辑时转换
-* 转换分类目录、标签或自定义分类法别名为拼音，支持快速编辑时转换
+* 转换文章别名为拼音或英文翻译，支持快速编辑时转换
+* 转换分类目录、标签或自定义分类法别名为拼音或英文翻译，支持快速编辑时转换
 * 当别名为英文，或手动设置了中文别名时，保持原样
-* 转换中文图片名为拼音
+* 转换中文图片名为拼音或英文翻译
 * 支持自定义转换方式为全拼或第一个字母
 * 支持设置拼音之间的间隔字符
-* 支持截取转换后的拼音为设置的长度
+* 支持截取转换后的拼音或英文翻译为设置的长度
 * 支持古腾堡编辑器
 
 ### 为什么需要这个插件？###
@@ -58,6 +58,13 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 3. 文件名自动转换
 
 ## Changelog ##
+
+### 1.4.1 ###
+
+* 修复古腾堡编辑器在无草稿直接发布时不能转换别名的 Bug
+
+### 1.4.0 ###
+* 添加百度翻译 API，如果选择不使用或者翻译失败，则使用拼音转换的方式生成别名，则使用拼音转换的方式生成别名
 
 ### 1.3.1 ###
 * 插件列表添加设置链接
