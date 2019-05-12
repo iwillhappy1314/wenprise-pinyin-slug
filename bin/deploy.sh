@@ -114,6 +114,8 @@ svn st | grep '^?' | sed -e 's/\?[ ]*/svn add -q /g' | sh
 # 如果设置了用户名密码，提交到仓库，必须是 Tag 才能提交
 #####################################################
 cd $BUILT_DIR/svn
+
+svn update
 svn stat
 
 # todo: 标签应该用 Git 标签还是插件版本号？
