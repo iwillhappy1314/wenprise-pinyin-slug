@@ -76,7 +76,7 @@ if [[ $TRAVIS_TAG ]]; then
     rsync -a --exclude=".svn" --checksum --delete ./git/ ./svn/trunk/
 else
     cp ./git/readme.txt ./svn/trunk/ -f
-    cp ./git/assets/ ./svn/assets/ -Rf
+    cp ./git/assets/. ./svn/assets/ -Rf
 fi
 
 # 同步完成后、移除 svn trunk 中的 .git 目录
@@ -114,9 +114,6 @@ svn st | grep '^?' | sed -e 's/\?[ ]*/svn add -q /g' | sh
 # 如果设置了用户名密码，提交到仓库，必须是 Tag 才能提交
 #####################################################
 cd $BUILT_DIR/svn
-
-svn add *
-svn add ./trunk/readme.txt
 svn stat
 
 # todo: 标签应该用 Git 标签还是插件版本号？
@@ -138,13 +135,9 @@ if [[ $TRAVIS_TAG ]]; then
 	# 打标签
 	echo "打标签";
     svn copy --no-auth-cache --username $WP_ORG_USERNAME --password $WP_ORG_PASSWORD $SVN_REPO/trunk $SVN_REPO/tags/$READMEVERSION -m "Add tag $READMEVERSION"
-
 	echo "发布新版本完成";
 
 else
-    cd $BUILT_DIR/svn/trunk
-
-	svn ci --no-auth-cache --username $WP_ORG_USERNAME --password $WP_ORG_PASSWORD -m "Deploy readme.txt"
-
+	svn ci --no-auth-cache --username $WP_ORG_USERNAME --password $WP_ORG_PASSWORD -m "Deploy version $READMEVERSION"
 	echo "更新 assets 和 readme.txt 完成";
 fi
