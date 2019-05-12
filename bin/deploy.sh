@@ -138,6 +138,6 @@ if [[ $TRAVIS_TAG ]]; then
 	echo "发布新版本完成";
 
 else
-	svn ci --no-auth-cache --username $WP_ORG_USERNAME --password $WP_ORG_PASSWORD
+	svn ci --no-auth-cache --username $WP_ORG_USERNAME --password $WP_ORG_PASSWORD -m "Update readme.txt"
 	echo "更新 assets 和 readme.txt 完成";
 fi
