@@ -142,10 +142,9 @@ if [[ $TRAVIS_TAG ]]; then
 	echo "发布新版本完成";
 
 else
-
     cd $BUILT_DIR/svn/trunk
 
-	svn ci --no-auth-cache --username $WP_ORG_USERNAME --password $WP_ORG_PASSWORD -m "`Deploy readme.txt`"
+	svn ci --no-auth-cache --username $WP_ORG_USERNAME --password $WP_ORG_PASSWORD -m "Deploy readme.txt"
 
 	echo "更新 assets 和 readme.txt 完成";
 fi
