@@ -116,7 +116,7 @@ svn st | grep '^?' | sed -e 's/\?[ ]*/svn add -q /g' | sh
 cd $BUILT_DIR/svn
 
 svn add *
-svn add readme.txt
+svn add ./trunk/readme.txt
 svn stat
 
 # todo: 标签应该用 Git 标签还是插件版本号？
@@ -145,7 +145,7 @@ else
 
     cd $BUILT_DIR/svn/trunk
 
-	svn ci --no-auth-cache --username $WP_ORG_USERNAME --password $WP_ORG_PASSWORD -m "Deploy readme.txt"
+	svn ci --no-auth-cache --username $WP_ORG_USERNAME --password $WP_ORG_PASSWORD -m "`Deploy readme.txt`"
 
 	echo "更新 assets 和 readme.txt 完成";
 fi
