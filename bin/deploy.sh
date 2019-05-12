@@ -116,6 +116,7 @@ svn st | grep '^?' | sed -e 's/\?[ ]*/svn add -q /g' | sh
 cd $BUILT_DIR/svn
 
 svn add *
+svn add readme.txt
 svn stat
 
 # todo: 标签应该用 Git 标签还是插件版本号？
