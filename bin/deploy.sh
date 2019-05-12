@@ -1,15 +1,6 @@
 #!/bin/bash
 
 #####################################################
-# 定义变量，需要根据插件和用户修改
-#####################################################
-MAINFILE="wenprise-pinyin-slug.php"
-WP_ORG_USERNAME="iwillhappy1314"
-SVN_REPO="https://plugins.svn.wordpress.org/wenprise-pinyin-slug/"
-GIT_REPO=https://github.com/${TRAVIS_REPO_SLUG}.git
-
-
-#####################################################
 # 部署检查
 #####################################################
 
@@ -130,14 +121,14 @@ if [[ $TRAVIS_TAG ]]; then
 
     # 发布到 wordpress.org
     echo "发布到 wordpress.org";
-	svn ci --no-auth-cache --username $WP_ORG_USERNAME --password $WP_ORG_PASSWORD -m "Deploy version $READMEVERSION"
+	svn ci --no-auth-cache --username $SVN_USER --password $SVN_PASS -m "Deploy version $READMEVERSION"
 
 	# 打标签
 	echo "打标签";
-    svn copy --no-auth-cache --username $WP_ORG_USERNAME --password $WP_ORG_PASSWORD $SVN_REPO/trunk $SVN_REPO/tags/$READMEVERSION -m "Add tag $READMEVERSION"
+    svn copy --no-auth-cache --username $SVN_USER --password $SVN_PASS $SVN_REPO/trunk $SVN_REPO/tags/$READMEVERSION -m "Add tag $READMEVERSION"
 	echo "发布新版本完成";
 
 else
-	svn ci --no-auth-cache --username $WP_ORG_USERNAME --password $WP_ORG_PASSWORD -m "Update readme.txt"
+	svn ci --no-auth-cache --username $SVN_USER --password $SVN_PASS -m "Update readme.txt"
 	echo "更新 assets 和 readme.txt 完成";
 fi
