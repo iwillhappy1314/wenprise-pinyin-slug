@@ -10,6 +10,8 @@ License:            MIT License
 License URI:        http://opensource.org/licenses/MIT
 */
 
+define( 'WPRS_PS_PATH', plugin_dir_path( __FILE__ ) );
+
 if (version_compare(phpversion(), '5.6.0', '<')) {
 
     // 显示警告信息

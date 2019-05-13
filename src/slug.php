@@ -102,8 +102,12 @@ add_filter('pre_category_nicename', function ($slug)
         return $slug;
     }
 
+    $tag_name = isset($_POST[ 'tag-name' ]) ? $_POST[ 'tag-name' ] : false;
+
     // 替换文章标题
-    $slug = wprs_slug_convert($_POST[ 'tag-name' ]);
+    if ($tag_name) {
+        $slug = wprs_slug_convert($_POST[ 'tag-name' ]);
+    }
 
     return sanitize_title($slug);
 }, 10, 1);
