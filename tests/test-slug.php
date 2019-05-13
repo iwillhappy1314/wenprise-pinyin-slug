@@ -62,6 +62,7 @@ class SlugTest extends WP_UnitTestCase
         $length = 13;
 
         $this->assertLessThan($length, strlen(wprs_trim_slug($slug, $length)));
+        $this->assertTrue(strpos($slug, wprs_trim_slug($slug, $length)) == 0);
     }
 
 
@@ -98,12 +99,12 @@ class SlugTest extends WP_UnitTestCase
         $file           = get_post($this->file_id);
         $slug_converted = wprs_slug_convert('中文图片名称');
 
-        $this->assertTrue(strpos($file->post_name, rtrim($slug_converted, '.')) == 0);
+        $this->assertTrue(strpos($file->post_name, $slug_converted) == 0);
     }
 
 
     /**
-     * 测试获取插件设置tag-name
+     * 测试获取插件设置 tag-name
      */
     public function test_wprs_plugin_get_option()
     {
