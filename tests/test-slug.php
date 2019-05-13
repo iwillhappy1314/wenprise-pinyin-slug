@@ -23,9 +23,15 @@ class SlugTest extends WP_UnitTestCase
         ]);
 
 
-        $this->term_id = $this->factory->term->create([
+        $this->cat_id = $this->factory->term->create([
             'name'     => '中文分类名称',
             'taxonomy' => 'category',
+            'slug'     => '',
+        ]);
+
+        $this->tag_id = $this->factory->term->create([
+            'name'     => '中文标签名称',
+            'taxonomy' => 'post_tag',
             'slug'     => '',
         ]);
 
@@ -33,13 +39,6 @@ class SlugTest extends WP_UnitTestCase
         $this->file_id = $this->factory->attachment->create_upload_object(
             WPRS_PS_PATH . '/tests/中文图片名称.jpg'
         );
-
-
-        // $this->term_id = $this->factory->term->update([
-        //     'name'     => '分类项目中文标题测试',
-        //     'taxonomy' => 'category',
-        //     'slug'     => '',
-        // ]);
 
     }
 
@@ -83,10 +82,11 @@ class SlugTest extends WP_UnitTestCase
      */
     public function test_term_slug_convert()
     {
-        $term           = get_term_by('id', $this->term_id, 'category');
-        $slug_converted = wprs_slug_convert($term->name);
+        $category = get_term_by('id', $this->cat_id, 'category');
+        $tag      = get_term_by('id', $this->tag_id, 'post_tag');
 
-        $this->assertEquals($term->slug, $slug_converted);
+        $this->assertEquals($category->slug, wprs_slug_convert($category->name));
+        $this->assertEquals($tag->slug, wprs_slug_convert($tag->name));
     }
 
 
