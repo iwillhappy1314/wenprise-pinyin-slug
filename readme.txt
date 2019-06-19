@@ -5,7 +5,7 @@ Tags: slug, pinyin,别名,中文字符,Pinyin Attachment Name,Pinyin Slugs,Pinyi
 Requires at least: 3.4
 Requires PHP: 5.6.0
 Tested up to: 5.2
-Stable tag: 1.4.2
+Stable tag: 1.4.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -60,8 +60,10 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 ## Changelog ##
 
-### 1.4.1 ###
+### 1.4.3 ###
+* 设置拼音默认长度为 60 个字符
 
+### 1.4.1 ###
 * 修复古腾堡编辑器在无草稿直接发布时不能转换别名的 Bug
 
 ### 1.4.0 ###

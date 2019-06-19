@@ -109,6 +109,7 @@ if ( ! class_exists('Wenprise_Pinyin_Slug_Settings')):
                         'label'             => __('别名长度限制', 'wprs'),
                         'desc'              => __('超过设置的长度后，会按照指定的长度截断转换后的拼音字符串。为保持拼音的完整性，如果设置了分隔符，会在最后一个分隔符后截断', 'wprs'),
                         'type'              => 'text',
+                        'default'           => '60',
                         'sanitize_callback' => 'sanitize_text_field',
                     ],
 

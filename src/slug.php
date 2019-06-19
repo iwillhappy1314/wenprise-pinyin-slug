@@ -196,19 +196,16 @@ add_filter('sanitize_file_name', function ($filename)
  *
  * @return mixed
  */
-if ( ! function_exists('wprs_plugin_get_option')) {
-    function wprs_plugin_get_option($section, $option, $default = '')
-    {
+function wprs_slug_get_option($section, $option, $default = '')
+{
 
-        $options = get_option($section);
+    $options = get_option($section);
 
-        if (isset($options[ $option ])) {
-            return $options[ $option ];
-        }
-
-        return $default;
+    if (isset($options[ $option ])) {
+        return $options[ $option ];
     }
 
+    return $default;
 }
 
 
@@ -219,19 +216,17 @@ if ( ! function_exists('wprs_plugin_get_option')) {
  *
  * @return string 转换后的拼音
  */
-if ( ! function_exists('wprs_slug_convert')) {
-    function wprs_slug_convert($name)
-    {
-        $translator_api = wprs_plugin_get_option('wprs_pinyin_slug', 'translator_api', 0);
+function wprs_slug_convert($name)
+{
+    $translator_api = wprs_slug_get_option('wprs_pinyin_slug', 'translator_api', 0);
 
-        if ($translator_api == 1) {
-            $slug = wprs_slug_translator($name);
-        } else {
-            $slug = wprs_slug_pinyin_convert($name);
-        }
-
-        return $slug;
+    if ($translator_api == 1) {
+        $slug = wprs_slug_translator($name);
+    } else {
+        $slug = wprs_slug_pinyin_convert($name);
     }
+
+    return $slug;
 }
 
 
@@ -246,9 +241,9 @@ if ( ! function_exists('wprs_slug_pinyin_convert')) {
     function wprs_slug_pinyin_convert($name)
     {
 
-        $divider = wprs_plugin_get_option('wprs_pinyin_slug', 'divider', '-');
-        $type    = wprs_plugin_get_option('wprs_pinyin_slug', 'type', 0);
-        $length  = wprs_plugin_get_option('wprs_pinyin_slug', 'length', '');
+        $divider = wprs_slug_get_option('wprs_pinyin_slug', 'divider', '-');
+        $type    = wprs_slug_get_option('wprs_pinyin_slug', 'type', 0);
+        $length  = wprs_slug_get_option('wprs_pinyin_slug', 'length', 60);
 
         $pinyin = new Pinyin();
 
@@ -266,112 +261,108 @@ if ( ! function_exists('wprs_slug_pinyin_convert')) {
 }
 
 
-if ( ! function_exists('wprs_slug_translator')) {
-    /**
-     * 百度翻译转换方式
-     *
-     * @param $name
-     *
-     * @return string
-     */
-    function wprs_slug_translator($name)
-    {
-        $length = wprs_plugin_get_option('wprs_pinyin_slug', 'length', '');
+/**
+ * 百度翻译转换方式
+ *
+ * @param $name
+ *
+ * @return string
+ */
+function wprs_slug_translator($name)
+{
+    $length = wprs_slug_get_option('wprs_pinyin_slug', 'length', 60);
 
-        $api_url  = 'https://fanyi-api.baidu.com/api/trans/vip/translate';
-        $app_id   = wprs_plugin_get_option('wprs_pinyin_slug', 'baidu_app_id', false);
-        $app_key  = wprs_plugin_get_option('wprs_pinyin_slug', 'baidu_api_key', false);
-        $app_salt = rand(10000, 99999);
+    $api_url  = 'https://fanyi-api.baidu.com/api/trans/vip/translate';
+    $app_id   = wprs_slug_get_option('wprs_pinyin_slug', 'baidu_app_id', false);
+    $app_key  = wprs_slug_get_option('wprs_pinyin_slug', 'baidu_api_key', false);
+    $app_salt = rand(10000, 99999);
 
-        if ( ! $app_id || ! $app_key) {
+    if ( ! $app_id || ! $app_key) {
 
+        $result = false;
+
+    } else {
+
+        // 签名
+        $str  = $app_id . $name . $app_salt . $app_key;
+        $sign = md5($str);
+
+        // 请求数据
+        $args = [
+            'q'     => $name,
+            'from'  => 'auto',
+            'to'    => 'en',
+            'appid' => $app_id,
+            'salt'  => $app_salt,
+            'sign'  => $sign,
+        ];
+
+        // 发送请求
+        $response = wp_remote_post($api_url, [
+                'method'      => 'POST',
+                'timeout'     => 45,
+                'redirection' => 5,
+                'httpversion' => '1.0',
+                'blocking'    => true,
+                'headers'     => [],
+                'body'        => $args,
+                'cookies'     => [],
+            ]
+        );
+
+        // 获取返回数据
+        if (is_wp_error($response)) {
             $result = false;
-
         } else {
+            $data = json_decode(wp_remote_retrieve_body($response));
 
-            // 签名
-            $str  = $app_id . $name . $app_salt . $app_key;
-            $sign = md5($str);
-
-            // 请求数据
-            $args = [
-                'q'     => $name,
-                'from'  => 'auto',
-                'to'    => 'en',
-                'appid' => $app_id,
-                'salt'  => $app_salt,
-                'sign'  => $sign,
-            ];
-
-            // 发送请求
-            $response = wp_remote_post($api_url, [
-                    'method'      => 'POST',
-                    'timeout'     => 45,
-                    'redirection' => 5,
-                    'httpversion' => '1.0',
-                    'blocking'    => true,
-                    'headers'     => [],
-                    'body'        => $args,
-                    'cookies'     => [],
-                ]
-            );
-
-            // 获取返回数据
-            if (is_wp_error($response)) {
-                $result = false;
+            if ( ! $data->error_code) {
+                $result = sanitize_title($data->trans_result[ 0 ]->dst);
+                $result = wprs_trim_slug($result, $length);
             } else {
-                $data = json_decode(wp_remote_retrieve_body($response));
-
-                if ( ! $data->error_code) {
-                    $result = sanitize_title($data->trans_result[ 0 ]->dst);
-                    $result = wprs_trim_slug($result, $length);
-                } else {
-                    $result = false;
-                }
+                $result = false;
             }
         }
-
-        if ( ! $result) {
-            $result = wprs_slug_pinyin_convert($name);
-        }
-
-        return $result;
     }
+
+    if ( ! $result) {
+        $result = wprs_slug_pinyin_convert($name);
+    }
+
+    return $result;
 }
 
 
 /**
  * 裁剪文本
  *
- * @param        $input
- * @param        $length
+ * @param string $input
+ * @param int    $length
  * @param string $divider
  * @param bool   $strip_html
  *
  * @return bool|string
  */
-if ( ! function_exists('wprs_trim_slug')) {
-    function wprs_trim_slug($input, $length, $divider = '-', $strip_html = true)
-    {
+function wprs_trim_slug($input, $length, $divider = '-', $strip_html = true)
+{
 
-        // strip tags, if desired
-        if ($strip_html) {
-            $input = strip_tags($input);
-        }
-
-        // no need to trim, already shorter than trim length
-        if (strlen($input) <= $length || ! $length || $length == '') {
-            return $input;
-        }
-
-        $trimmed_text = substr($input, 0, $length);
-
-        // find last space within length
-        if ($divider != '') {
-            $last_space   = strrpos(substr($input, 0, $length), $divider);
-            $trimmed_text = substr($input, 0, $last_space);
-        }
-
-        return $trimmed_text;
+    // strip tags, if desired
+    if ($strip_html) {
+        $input = strip_tags($input);
     }
+
+    // no need to trim, already shorter than trim length
+    if (strlen($input) <= $length || ! $length || $length == '') {
+        return $input;
+    }
+
+    $trimmed_text = substr($input, 0, $length);
+
+    // find last space within length
+    if ($divider != '') {
+        $last_space   = strrpos(substr($input, 0, $length), $divider);
+        $trimmed_text = substr($input, 0, $last_space);
+    }
+
+    return $trimmed_text;
 }
