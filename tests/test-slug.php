@@ -108,7 +108,7 @@ class SlugTest extends WP_UnitTestCase
      */
     public function test_wprs_plugin_get_option()
     {
-        $this->assertEquals(34, wprs_plugin_get_option('wprs_pinyin_slug', 'length', 34));
+        $this->assertEquals(34, wprs_slug_get_option('wprs_pinyin_slug', 'length', 34));
     }
 
 }
