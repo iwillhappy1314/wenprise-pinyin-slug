@@ -60,6 +60,9 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 ## Changelog ##
 
+### 1.4.5 ###
+* 更改访问设置的权限为管理员
+
 ### 1.4.4 ###
 * 添加禁用文件名自动转换的选项
 
