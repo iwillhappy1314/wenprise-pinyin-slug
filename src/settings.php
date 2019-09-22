@@ -30,7 +30,7 @@ if ( ! class_exists( 'Wenprise_Pinyin_Slug_Settings' ) ):
 				return;
 			}
 
-			wp_enqueue_script( 'my_custom_script', plugin_dir_url( __FILE__ ) . 'scripts.js' );
+			wp_enqueue_script( 'wenprise_pinyin_slug_admin_script', plugin_dir_url( __FILE__ ) . 'scripts.js' );
 		}
 
 
@@ -52,9 +52,15 @@ if ( ! class_exists( 'Wenprise_Pinyin_Slug_Settings' ) ):
 		 * 添加设置菜单
 		 */
 		function admin_menu() {
-			add_options_page( '别名转拼音|英文', '别名转拼音|英文', 'delete_posts', 'wenprise_pinyin_slug', [ $this, 'plugin_page' ] );
+			add_options_page( '别名转拼音|英文', '别名转拼音|英文', 'manage_options', 'wenprise_pinyin_slug', [ $this, 'plugin_page' ] );
 		}
 
+
+        /**
+         * 获取设置区域
+         *
+         * @return array
+         */
 		function get_settings_sections() {
 			$sections = [
 				[
