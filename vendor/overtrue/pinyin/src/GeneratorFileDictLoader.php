@@ -70,6 +70,7 @@ class GeneratorFileDictLoader implements DictLoaderInterface
      * Construct a new file object.
      *
      * @param string $filename file path
+     * @param string $mode     file open mode
      *
      * @return SplFileObject
      */
@@ -82,15 +83,17 @@ class GeneratorFileDictLoader implements DictLoaderInterface
      * get Generator syntax.
      *
      * @param array $handles SplFileObjects
+     *
+     * @return Generator
      */
     protected function getGenerator(array $handles)
     {
         foreach ($handles as $handle) {
             $handle->seek(0);
-            while ($handle->eof() === false) {
+            while (false === $handle->eof()) {
                 $string = str_replace(['\'', ' ', PHP_EOL, ','], '', $handle->fgets());
 
-                if (strpos($string, '=>') === false) {
+                if (false === strpos($string, '=>')) {
                     continue;
                 }
 
