@@ -174,6 +174,14 @@ add_filter('sanitize_file_name', function ($filename)
 
     // 手动编辑时，不自动转换为拼音
     $parts     = explode('.', $filename);
+
+    // 没有后缀时，直接返回文件名，不用再加 . 和后缀
+    if ( count( $parts ) <= 1 ) {
+        if (preg_match('/[\x{4e00}-\x{9fa5}]+/u', $filename)) {
+            return wprs_slug_convert($filename);
+        }
+    }
+
     $filename  = array_shift($parts);
     $extension = array_pop($parts);
 
