@@ -180,6 +180,8 @@ add_filter('sanitize_file_name', function ($filename)
         if (preg_match('/[\x{4e00}-\x{9fa5}]+/u', $filename)) {
             return wprs_slug_convert($filename);
         }
+
+        return $filename;
     }
 
     $filename  = array_shift($parts);
