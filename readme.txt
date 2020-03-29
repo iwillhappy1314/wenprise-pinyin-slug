@@ -5,7 +5,7 @@ Tags: slug, pinyin,别名,中文字符,Pinyin Attachment Name,Pinyin Slugs,Pinyi
 Requires at least: 3.4
 Requires PHP: 5.6.0
 Tested up to: 5.2
-Stable tag: 1.4.9
+Stable tag: 1.4.10
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -59,6 +59,9 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 3. 文件名自动转换
 
 ## Changelog ##
+
+### 1.4.10 ###
+* 使用严格模式进行设置测试
 
 ### 1.4.8 ###
 * 修复没有后缀时，导致 sanitize_file_name 函数多一个 . 的问题
