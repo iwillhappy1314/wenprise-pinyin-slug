@@ -62,7 +62,7 @@ class SlugTest extends WP_UnitTestCase
         $length = 13;
 
         $this->assertLessThan($length, strlen(wprs_trim_slug($slug, $length)));
-        $this->assertTrue(strpos($slug, wprs_trim_slug($slug, $length)) == 0);
+        $this->assertSame(strpos($slug, wprs_trim_slug($slug, $length)), 0);
     }
 
 
@@ -99,7 +99,7 @@ class SlugTest extends WP_UnitTestCase
         $file           = get_post($this->file_id);
         $slug_converted = wprs_slug_convert('中文图片名称');
 
-        $this->assertTrue(strpos($file->post_name, $slug_converted) == 0);
+        $this->assertEquals(strpos($file->post_name, $slug_converted), 0);
     }
 
 

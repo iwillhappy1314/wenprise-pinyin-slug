@@ -14,7 +14,7 @@ add_filter('name_save_pre', function ($slug)
 {
 
     // 手动编辑时，不自动转换为拼音
-    if ($slug && $slug != '') {
+    if ($slug && $slug !== '') {
         return $slug;
     }
 
@@ -51,21 +51,19 @@ function wprs_rest_convert_slug($prepared_post, $request)
     // 获取标题
     if (isset($request[ 'title' ])) {
         $post_title = $request[ 'title' ];
-    } else {
-        if (isset($request[ 'id' ])) {
-            $post_title = $saved_post->post_title;
-        }
+    } elseif (isset($request[ 'id' ])) {
+        $post_title = $saved_post->post_title;
     }
 
     // 1. 已发布状态下，如果设置了 slug，说明编辑了 slug，
     // 1.1 如果 slug 为空，说明删除了 slug 需要重新生成
     // 1.2 如果 slug 不为空，说明手动设置了 slug, 使用设置的 slug, 不自动生成
-    if ($request[ 'status' ] == 'publish') {
+    if ($request[ 'status' ] === 'publish') {
 
         // 不处理已保存、且文章已有 slug 的情况，避免编辑时修改掉原有中文 slug
-        if ($saved_post && $saved_post->post_name == '') {
+        if ($saved_post && $saved_post->post_name === '') {
 
-            if ( ! isset($request[ 'slug' ]) || empty($request[ 'slug' ]) || $request[ 'slug' ] == '') {
+            if ( ! isset($request[ 'slug' ]) || empty($request[ 'slug' ]) || $request[ 'slug' ] === '') {
                 $prepared_post->post_name = wprs_slug_convert($post_title);
             }
 
@@ -74,7 +72,7 @@ function wprs_rest_convert_slug($prepared_post, $request)
     } else {
 
         // 如果上一个状态是已发布，说明执行的是 "切换到草稿" 的操作，这种情况下，不自动转换 slug
-        if ( ! $saved_post || $saved_post->post_status != 'publish') {
+        if ( ! $saved_post || $saved_post->post_status !== 'publish') {
             // 2. 其他状态下，如果没有设置 slug, 或 slug 为空，自动生成，如果设置了 slug ,依然不自动生成
             if ( ! isset($request[ 'slug' ]) || empty($request[ 'slug' ])) {
                 $prepared_post->post_name = wprs_slug_convert($post_title);
@@ -166,17 +164,17 @@ add_filter('wp_update_term_data', function ($data, $term_id, $taxonomy, $args)
  */
 add_filter('sanitize_file_name', function ($filename)
 {
-    $disable_file_convert = wprs_slug_get_option('wprs_pinyin_slug', 'disable_file_convert', "off");
+    $disable_file_convert = wprs_slug_get_option('wprs_pinyin_slug', 'disable_file_convert', 'off');
 
-    if ($disable_file_convert == 'on') {
+    if ($disable_file_convert === 'on') {
         return $filename;
     }
 
     // 手动编辑时，不自动转换为拼音
-    $parts     = explode('.', $filename);
+    $parts = explode('.', $filename);
 
     // 没有后缀时，直接返回文件名，不用再加 . 和后缀
-    if ( count( $parts ) <= 1 ) {
+    if (count($parts) <= 1) {
         if (preg_match('/[\x{4e00}-\x{9fa5}]+/u', $filename)) {
             return wprs_slug_convert($filename);
         }
@@ -233,9 +231,9 @@ function wprs_slug_get_option($section, $option, $default = '')
  */
 function wprs_slug_convert($name)
 {
-    $translator_api = wprs_slug_get_option('wprs_pinyin_slug', 'translator_api', 0);
+    $translator_api = (int)wprs_slug_get_option('wprs_pinyin_slug', 'translator_api', 0);
 
-    if ($translator_api == 1) {
+    if ($translator_api === 1) {
         $slug = wprs_slug_translator($name);
     } else {
         $slug = wprs_slug_pinyin_convert($name);
@@ -266,7 +264,7 @@ if ( ! function_exists('wprs_slug_pinyin_convert')) {
 
         $pinyin = new Pinyin();
 
-        if ($type == 0) {
+        if ($type === 0) {
             $slug = $pinyin->permalink($name, $divider);
         } else {
             $slug = $pinyin->abbr($name, $divider);
@@ -371,14 +369,14 @@ function wprs_trim_slug($input, $length, $divider = '-', $strip_html = true)
     }
 
     // no need to trim, already shorter than trim length
-    if (strlen($input) <= $length || ! $length || $length == '') {
+    if ( ! $length || $length === '' || strlen($input) <= $length) {
         return $input;
     }
 
     $trimmed_text = substr($input, 0, $length);
 
     // find last space within length
-    if ($divider != '') {
+    if ($divider !== '') {
         $last_space   = strrpos(substr($input, 0, $length), $divider);
         $trimmed_text = substr($input, 0, $last_space);
     }
