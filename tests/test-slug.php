@@ -29,6 +29,12 @@ class SlugTest extends WP_UnitTestCase
             'slug'     => '',
         ]);
 
+        $this->cat_id2 = $this->factory->term->create([
+            'name'     => 'English 中文分类名称',
+            'taxonomy' => 'category',
+            'slug'     => '',
+        ]);
+
         $this->tag_id = $this->factory->term->create([
             'name'     => '中文标签名称',
             'taxonomy' => 'post_tag',
@@ -84,9 +90,11 @@ class SlugTest extends WP_UnitTestCase
     public function test_term_slug_convert()
     {
         $category = get_term_by('id', $this->cat_id, 'category');
+        $category2 = get_term_by('id', $this->cat_id2, 'category');
         $tag      = get_term_by('id', $this->tag_id, 'post_tag');
 
         $this->assertEquals($category->slug, wprs_slug_convert($category->name));
+        $this->assertEquals($category2->slug, wprs_slug_convert($category2->name));
         $this->assertEquals($tag->slug, wprs_slug_convert($tag->name));
     }
 
