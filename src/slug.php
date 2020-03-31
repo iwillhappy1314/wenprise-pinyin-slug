@@ -2,6 +2,20 @@
 
 use Overtrue\Pinyin\Pinyin;
 
+/**
+ * 不能直接用 sanitize_title, 因为无法判断用户是否手动设置了中文 Slug, 或者用户是在编辑旧的中文 Slug，这两种情况，如果自动转化都有问题
+ */
+// add_filter('sanitize_title', function ($title, $raw_title, $context)
+// {
+//     $converted_title = wprs_slug_convert($raw_title);
+//
+//     if ( ! $converted_title) {
+//         $converted_title = $title;
+//     }
+//
+//     return $converted_title;
+// }, 10, 3);
+
 
 /**
  * 文章别名保存之前，如果没有设置，自动转换为拼音
@@ -19,9 +33,7 @@ add_filter('name_save_pre', function ($slug)
     }
 
     // 替换文章标题
-    $title = wprs_slug_convert($_POST[ 'post_title' ]);
-
-    return sanitize_title($title);
+    return wprs_slug_convert($_POST[ 'post_title' ]);
 }, 10, 1);
 
 
@@ -107,7 +119,7 @@ add_filter('pre_category_nicename', function ($slug)
         $slug = wprs_slug_convert($_POST[ 'tag-name' ]);
     }
 
-    return sanitize_title($slug);
+    return $slug;
 }, 10, 1);
 
 
@@ -259,12 +271,12 @@ if ( ! function_exists('wprs_slug_pinyin_convert')) {
     {
 
         $divider = wprs_slug_get_option('wprs_pinyin_slug', 'divider', '-');
-        $type    = wprs_slug_get_option('wprs_pinyin_slug', 'type', 0);
-        $length  = wprs_slug_get_option('wprs_pinyin_slug', 'length', 60);
+        $type    = wprs_slug_get_option('wprs_pinyin_slug', 'type', '0');
+        $length  = (int)wprs_slug_get_option('wprs_pinyin_slug', 'length', 60);
 
         $pinyin = new Pinyin();
 
-        if ($type === 0) {
+        if ($type === '0') {
             $slug = $pinyin->permalink($name, $divider);
         } else {
             $slug = $pinyin->abbr($name, $divider);
@@ -272,7 +284,7 @@ if ( ! function_exists('wprs_slug_pinyin_convert')) {
 
         $slug = wprs_trim_slug($slug, $length, $divider);
 
-        return $slug;
+        return strtolower($slug);
 
     }
 }
@@ -334,7 +346,7 @@ function wprs_slug_translator($name)
             $data = json_decode(wp_remote_retrieve_body($response));
 
             if ( ! $data->error_code) {
-                $result = sanitize_title($data->trans_result[ 0 ]->dst);
+                $result = $data->trans_result[ 0 ]->dst;
                 $result = wprs_trim_slug($result, $length);
             } else {
                 $result = false;
