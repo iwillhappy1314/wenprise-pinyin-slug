@@ -9,7 +9,7 @@ jQuery(document).ready(function($) {
                 parent();
 
         // 根据是否需要发票显示
-        if (parseInt(check_el) === 0 || parseInt(check_el2) === 2) {
+        if (parseInt(check_el) === 0 || parseInt(check_el2) !== 2) {
             condition_el.hide();
         } else {
             condition_el.show();
