@@ -13,6 +13,12 @@ jobs:
         run: |
           composer install --no-dev
           composer dump-autoload -o
+      - name: Unit Test
+        run: |
+          sudo systemctl start mysql.service
+          bin/install-wp-tests.sh wordpress_test root 'root' localhost $WP_VERSION
+          composer global require "phpunit/phpunit=4.8.*|5.7.*"
+          phpunit
       - name: WordPress Plugin Deploy
         uses: 10up/action-wordpress-plugin-deploy@master
         env:
