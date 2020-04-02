@@ -54,24 +54,40 @@ class SlugTest extends WP_UnitTestCase
 
 
     /**
-     * 测试别名转换函数
+     * 全拼转换测试
      */
-    public function test_wprs_slug_convert()
+    public function test_wprs_full_slug_convert()
     {
         $this->assertEquals('zhe-shi-ce-shi', wprs_slug_convert('这是 测试 ～ ！'));
         $this->assertEquals('this-is-a-tes-zhe-shi-yi-ge-ce-shi', wprs_slug_convert('this is a tes 这是一个测试'));
+    }
 
+
+    /**
+     * 首字母转换测试
+     */
+    public function test_wprs_first_slug_convert()
+    {
         $option           = get_option('wprs_pinyin_slug');
         $option[ 'type' ] = 1;
         update_option('wprs_pinyin_slug', $option);
 
         $this->assertEquals('z-s-c-s', wprs_slug_convert('这是 测试 ～ ！'));
         $this->assertEquals('t-i-a-t-z-s-y-g-c-s', wprs_slug_convert('this is a tes 这是一个测试'));
+    }
 
-        $option[ 'divider' ] = '__';
+
+    /**
+     * 首字母转换测试
+     */
+    public function test_wprs_devider_convert()
+    {
+        $option              = get_option('wprs_pinyin_slug');
+        $option[ 'type' ]    = 2;
+        $option[ 'divider' ] = '_';
         update_option('wprs_pinyin_slug', $option);
 
-        $this->assertEquals('z__s__c__s', wprs_slug_convert('这是 测试 ～ ！'));
+        $this->assertEquals('z_s_c_s', wprs_slug_convert('这是 测试 ～ ！'));
     }
 
 
@@ -80,10 +96,10 @@ class SlugTest extends WP_UnitTestCase
      */
     public function test_baidu_api()
     {
-        $option                     = get_option('wprs_pinyin_slug');
-        $option[ 'type' ] = 2;
-        $option[ 'baidu_app_id' ]   = '20190115000256953';
-        $option[ 'baidu_api_key' ]  = 'X6UIcorRPPt01X4PJgYA';
+        $option                    = get_option('wprs_pinyin_slug');
+        $option[ 'type' ]          = 2;
+        $option[ 'baidu_app_id' ]  = '20190115000256953';
+        $option[ 'baidu_api_key' ] = 'X6UIcorRPPt01X4PJgYA';
 
         update_option('wprs_pinyin_slug', $option);
 
@@ -156,7 +172,7 @@ class SlugTest extends WP_UnitTestCase
         $file2 = get_post($this->file_id2);
         $file3 = get_post($this->file_id3);
 
-        $slug_converted = wprs_slug_convert('中文图片名称');
+        $slug_converted  = wprs_slug_convert('中文图片名称');
         $slug_converted3 = wprs_slug_convert('中文图片名称多后缀.test');
 
         $this->assertEquals(strpos($file->post_name, $slug_converted), 0);
