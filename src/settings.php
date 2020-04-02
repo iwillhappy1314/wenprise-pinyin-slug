@@ -84,7 +84,7 @@ if ( ! class_exists( 'Wenprise_Pinyin_Slug_Settings' ) ):
 					[
 						'name'    => 'type',
 						'label'   => __( '转换方式', 'wprs' ),
-						'desc'    => __( '全拼、首字母或或百度翻译', 'wprs' ),
+						'desc'    => __( '全拼、首字母或或百度翻译 (首字母模式下，英文也会取第一个字母)', 'wprs' ),
 						'type'    => 'select',
 						'default' => 0,
 						'options' => [

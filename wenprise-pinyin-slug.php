@@ -12,6 +12,7 @@ Requires PHP: 5.6
 */
 
 define('WPRS_PS_PATH', plugin_dir_path(__FILE__));
+define('WPRS_PS_VERSION', '1.5.0');
 
 add_action('plugins_loaded', function ()
 {
@@ -28,6 +29,24 @@ add_action('plugins_loaded', function ()
         }
 
         return;
+    }
+
+
+    /**
+     * 升级数据库
+     */
+    $installed_version = get_option('wprs_pinyin_slug_version', '1.4.13');
+
+    if (version_compare($installed_version, WPRS_PS_VERSION) === -1) {
+        $options = get_option('wprs_pinyin_slug');
+
+        if (isset($options[ 'translator_api' ]) && (int)$options[ 'translator_api' ] === 1) {
+            unset($options[ 'translator_api' ]);
+            $options[ 'type' ] = 2;
+            update_option('wprs_pinyin_slug', $options);
+        }
+
+        update_option('wprs_pinyin_slug_version', WPRS_PS_VERSION);
     }
 
     /**
