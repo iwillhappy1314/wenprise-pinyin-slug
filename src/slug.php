@@ -17,6 +17,24 @@ use Overtrue\Pinyin\Pinyin;
 // }, 10, 3);
 
 
+// add_filter('wp_unique_post_slug', function ($slug, $post_ID, $post_status, $post_type, $post_parent, $original_slug)
+// {
+//     if($post_ID === 0){
+//         return $slug;
+//     }
+//
+//     var_dump($post_ID);
+//
+//     $post = get_post($post_ID);
+//
+//     if ($post->post_type === 'attachment') {
+//         return $slug;
+//     }
+//
+//     return wprs_slug_convert($post->post_name);
+// }, 10, 6);
+
+
 /**
  * 文章别名保存之前，如果没有设置，自动转换为拼音
  *
@@ -243,9 +261,9 @@ function wprs_slug_get_option($section, $option, $default = '')
  */
 function wprs_slug_convert($name)
 {
-    $translator_api = (int)wprs_slug_get_option('wprs_pinyin_slug', 'translator_api', 0);
+    $use_translator_api = (int)wprs_slug_get_option('wprs_pinyin_slug', 'type', 0);
 
-    if ($translator_api === 1) {
+    if ($use_translator_api === 2) {
         $slug = wprs_slug_translator($name);
     } else {
         $slug = wprs_slug_pinyin_convert($name);
@@ -255,9 +273,7 @@ function wprs_slug_convert($name)
         return $name;
     }
 
-    // echo($slug . "\r\n");
-
-    return $slug;
+    return sanitize_title($slug);
 }
 
 
@@ -273,12 +289,12 @@ if ( ! function_exists('wprs_slug_pinyin_convert')) {
     {
 
         $divider = wprs_slug_get_option('wprs_pinyin_slug', 'divider', '-');
-        $type    = wprs_slug_get_option('wprs_pinyin_slug', 'type', '0');
+        $type    = (int)wprs_slug_get_option('wprs_pinyin_slug', 'type', 0);
         $length  = (int)wprs_slug_get_option('wprs_pinyin_slug', 'length', 60);
 
         $pinyin = new Pinyin();
 
-        if ($type === '0') {
+        if ($type === 0) {
             $slug = $pinyin->permalink($name, $divider);
         } else {
             $slug = $pinyin->abbr($name, $divider, PINYIN_KEEP_ENGLISH);
@@ -301,7 +317,7 @@ if ( ! function_exists('wprs_slug_pinyin_convert')) {
  */
 function wprs_slug_translator($name)
 {
-    $length = wprs_slug_get_option('wprs_pinyin_slug', 'length', 60);
+    $length = (int)wprs_slug_get_option('wprs_pinyin_slug', 'length', 60);
 
     $api_url  = 'https://fanyi-api.baidu.com/api/trans/vip/translate';
     $app_id   = wprs_slug_get_option('wprs_pinyin_slug', 'baidu_app_id', false);
@@ -347,7 +363,7 @@ function wprs_slug_translator($name)
         } else {
             $data = json_decode(wp_remote_retrieve_body($response));
 
-            if ( ! $data->error_code) {
+            if ( ! isset($data->error_code)) {
                 $result = $data->trans_result[ 0 ]->dst;
                 $result = wprs_trim_slug($result, $length);
             } else {

@@ -84,12 +84,13 @@ if ( ! class_exists( 'Wenprise_Pinyin_Slug_Settings' ) ):
 					[
 						'name'    => 'type',
 						'label'   => __( '转换方式', 'wprs' ),
-						'desc'    => __( '全拼或每个字的第一个字母', 'wprs' ),
+						'desc'    => __( '全拼、首字母或或百度翻译', 'wprs' ),
 						'type'    => 'select',
 						'default' => 0,
 						'options' => [
-							0 => '全拼',
-							1 => '第一个字母',
+							0 => '拼音全拼',
+							1 => '拼音首字母',
+							2 => '百度翻译',
 						],
 					],
 
@@ -110,18 +111,6 @@ if ( ! class_exists( 'Wenprise_Pinyin_Slug_Settings' ) ):
 						'type'              => 'text',
 						'default'           => '60',
 						'sanitize_callback' => 'sanitize_text_field',
-					],
-
-					[
-						'name'    => 'translator_api',
-						'label'   => __( '使用翻译服务生成英文别名', 'wprs' ),
-						'desc'    => __( '如果启用百度翻译、请填写下面的 APP ID 和 密钥，非则翻译服务不会生效；如果选择不使用或者翻译失败，则使用拼音转换的方式生成别名。', 'wprs' ),
-						'type'    => 'select',
-						'default' => 0,
-						'options' => [
-							0 => '不使用',
-							1 => '百度翻译',
-						],
 					],
 
 					[
