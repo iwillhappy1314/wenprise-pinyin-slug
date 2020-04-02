@@ -255,6 +255,8 @@ function wprs_slug_convert($name)
         return $name;
     }
 
+    // echo($slug . "\r\n");
+
     return $slug;
 }
 
@@ -279,7 +281,7 @@ if ( ! function_exists('wprs_slug_pinyin_convert')) {
         if ($type === '0') {
             $slug = $pinyin->permalink($name, $divider);
         } else {
-            $slug = $pinyin->abbr($name, $divider);
+            $slug = $pinyin->abbr($name, $divider, PINYIN_KEEP_ENGLISH);
         }
 
         $slug = wprs_trim_slug($slug, $length, $divider);

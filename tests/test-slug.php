@@ -46,6 +46,15 @@ class SlugTest extends WP_UnitTestCase
             WPRS_PS_PATH . '/tests/中文图片名称.jpg'
         );
 
+        // 无后缀的文件名称无法在后台上传
+        // $this->file_id2 = $this->factory->attachment->create_upload_object(
+        //     WPRS_PS_PATH . '/tests/中文图片名称无后缀'
+        // );
+
+        $this->file_id3 = $this->factory->attachment->create_upload_object(
+            WPRS_PS_PATH . '/tests/中文图片名称多后缀.test.jpg'
+        );
+
     }
 
 
@@ -56,6 +65,18 @@ class SlugTest extends WP_UnitTestCase
     {
         $this->assertEquals('zhe-shi-ce-shi', wprs_slug_convert('这是 测试 ～ ！'));
         $this->assertEquals('this-is-a-tes-zhe-shi-yi-ge-ce-shi', wprs_slug_convert('this is a tes 这是一个测试'));
+
+        $option = get_option('wprs_pinyin_slug');
+        $option['type'] = 1;
+        update_option('wprs_pinyin_slug', $option);
+
+        $this->assertEquals('z-s-c-s', wprs_slug_convert('这是 测试 ～ ！'));
+        $this->assertEquals('t-i-a-t-z-s-y-g-c-s', wprs_slug_convert('this is a tes 这是一个测试'));
+
+        $option['divider'] = '*';
+        update_option('wprs_pinyin_slug', $option);
+
+        $this->assertEquals('z*s*c*s', wprs_slug_convert('这是 测试 ～ ！'));
     }
 
 
@@ -105,9 +126,16 @@ class SlugTest extends WP_UnitTestCase
     public function test_wprs_convert_file_name()
     {
         $file           = get_post($this->file_id);
+        $file2           = get_post($this->file_id2);
+        $file3           = get_post($this->file_id3);
+
         $slug_converted = wprs_slug_convert('中文图片名称');
+        // $slug_converted2 = wprs_slug_convert('中文图片名称无后缀');
+        $slug_converted3 = wprs_slug_convert('中文图片名称多后缀.test');
 
         $this->assertEquals(strpos($file->post_name, $slug_converted), 0);
+        // $this->assertEquals(strpos($file2->post_name, $slug_converted2), 0);
+        $this->assertEquals(strpos($file3->post_name, $slug_converted3), 0);
     }
 
 
