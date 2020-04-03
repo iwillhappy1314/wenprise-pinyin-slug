@@ -32,8 +32,13 @@ matrix:
     - php: 5.6
       env: WP_VERSION=4.7
     - php: 7.1
+      env: WP_VERSION=latest
+    - php: 7.2
+      env: WP_VERSION=latest
+    - php: 7.3
       env: WP_VERSION=latest WP_PULUGIN_DEPLOY=1
       dist: precise
+
 
 before_script:
   - export PATH="$HOME/.composer/vendor/bin:$PATH"
@@ -65,4 +70,4 @@ script:
       phpcs
     fi
 
-after_success: curl -L https://raw.githubusercontent.com/iwillhappy1314/deploy2wporg/master/deploy.sh | sh
+#after_success: curl -L https://raw.githubusercontent.com/iwillhappy1314/deploy2wporg/master/deploy.sh | sh
