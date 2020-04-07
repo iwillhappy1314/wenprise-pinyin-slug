@@ -5,7 +5,7 @@ Tags: slug, pinyin,别名,中文字符,Pinyin Attachment Name,Pinyin Slugs,Pinyi
 Requires at least: 3.4
 Requires PHP: 5.6.0
 Tested up to: 5.4
-Stable tag: 1.5.0
+Stable tag: 1.5.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -59,6 +59,13 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 3. 文件名自动转换
 
 ## Changelog ##
+
+### 1.5.1 ###
+* 修复翻译模式下，分隔符无效的问题
+
+### 1.5.0 ###
+* 修改后台设置，合并翻译设置和拼音转换模式设置
+
 ### 1.4.13 ###
 * Bugfix
 * 中英混合时，转换英文为小写
