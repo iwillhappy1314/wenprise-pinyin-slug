@@ -364,7 +364,10 @@ function wprs_slug_translator($name)
             $data = json_decode(wp_remote_retrieve_body($response));
 
             if ( ! isset($data->error_code)) {
+                $divider = wprs_slug_get_option('wprs_pinyin_slug', 'divider', '-');
+
                 $result = $data->trans_result[ 0 ]->dst;
+                $result = str_replace(' ', $divider, $result);
                 $result = wprs_trim_slug($result, $length);
             } else {
                 $result = false;
@@ -398,17 +401,20 @@ function wprs_trim_slug($input, $length, $divider = '-', $strip_html = true)
         $input = strip_tags($input);
     }
 
-    // no need to trim, already shorter than trim length
+    // 如果字符串已经比裁剪程度短了，无需再裁剪，直接返回。
     if ( ! $length || $length === '' || strlen($input) <= $length) {
         return $input;
     }
 
     $trimmed_text = substr($input, 0, $length);
 
-    // find last space within length
+    // 查找最后截取字符串的最后一个分隔符位置
     if ($divider !== '') {
-        $last_space   = strrpos(substr($input, 0, $length), $divider);
-        $trimmed_text = substr($input, 0, $last_space);
+        $last_space = strrpos(substr($input, 0, $length), $divider);
+
+        if ($last_space) {
+            $trimmed_text = substr($input, 0, $last_space);
+        }
     }
 
     return $trimmed_text;
