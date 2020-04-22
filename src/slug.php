@@ -51,7 +51,7 @@ add_filter('name_save_pre', function ($slug)
     }
 
     // 替换文章标题
-    return wprs_slug_convert($_POST[ 'post_title' ]);
+    return wprs_slug_convert($_POST[ 'post_title' ], 'post');
 }, 10, 1);
 
 
@@ -94,7 +94,7 @@ function wprs_rest_convert_slug($prepared_post, $request)
         if ($saved_post && $saved_post->post_name === '') {
 
             if ( ! isset($request[ 'slug' ]) || empty($request[ 'slug' ]) || $request[ 'slug' ] === '') {
-                $prepared_post->post_name = wprs_slug_convert($post_title);
+                $prepared_post->post_name = wprs_slug_convert($post_title, 'post');
             }
 
         }
@@ -105,7 +105,7 @@ function wprs_rest_convert_slug($prepared_post, $request)
         if ( ! $saved_post || $saved_post->post_status !== 'publish') {
             // 2. 其他状态下，如果没有设置 slug, 或 slug 为空，自动生成，如果设置了 slug ,依然不自动生成
             if ( ! isset($request[ 'slug' ]) || empty($request[ 'slug' ])) {
-                $prepared_post->post_name = wprs_slug_convert($post_title);
+                $prepared_post->post_name = wprs_slug_convert($post_title, 'post');
             }
         }
 
@@ -134,7 +134,7 @@ add_filter('pre_category_nicename', function ($slug)
 
     // 替换文章标题
     if ($tag_name) {
-        $slug = wprs_slug_convert($_POST[ 'tag-name' ]);
+        $slug = wprs_slug_convert($_POST[ 'tag-name' ], 'term');
     }
 
     return $slug;
@@ -156,7 +156,7 @@ add_filter('wp_insert_term_data', function ($data, $taxonomy, $args)
 
     // 手动编辑时，不自动转换为拼音
     if ($args[ 'slug' ] === '') {
-        $data[ 'slug' ] = wp_unique_term_slug(wprs_slug_convert($data[ 'name' ]), (object)$args);
+        $data[ 'slug' ] = wp_unique_term_slug(wprs_slug_convert($data[ 'name' ], 'term'), (object)$args);
     }
 
     return $data;
@@ -178,7 +178,7 @@ add_filter('wp_update_term_data', function ($data, $term_id, $taxonomy, $args)
 
     // 手动编辑时，不自动转换为拼音
     if ($args[ 'slug' ] === '') {
-        $data[ 'slug' ] = wp_unique_term_slug(wprs_slug_convert($data[ 'name' ]), (object)$args);
+        $data[ 'slug' ] = wp_unique_term_slug(wprs_slug_convert($data[ 'name' ], 'term'), (object)$args);
     }
 
     return $data;
@@ -206,7 +206,7 @@ add_filter('sanitize_file_name', function ($filename)
     // 没有后缀时，直接返回文件名，不用再加 . 和后缀
     if (count($parts) <= 1) {
         if (preg_match('/[\x{4e00}-\x{9fa5}]+/u', $filename)) {
-            return wprs_slug_convert($filename);
+            return wprs_slug_convert($filename, 'file');
         }
 
         return $filename;
@@ -220,7 +220,7 @@ add_filter('sanitize_file_name', function ($filename)
     }
 
     if (preg_match('/[\x{4e00}-\x{9fa5}]+/u', $filename)) {
-        $filename = wprs_slug_convert($filename);
+        $filename = wprs_slug_convert($filename, 'file');
     }
 
     $filename .= '.' . $extension;
@@ -256,10 +256,11 @@ function wprs_slug_get_option($section, $option, $default = '')
  * 转换拼音的通用功能
  *
  * @param $name
+ * @param $type
  *
  * @return string 转换后的拼音
  */
-function wprs_slug_convert($name)
+function wprs_slug_convert($name, $type = 'post')
 {
     $use_translator_api = (int)wprs_slug_get_option('wprs_pinyin_slug', 'type', 0);
 
@@ -273,7 +274,7 @@ function wprs_slug_convert($name)
         return $name;
     }
 
-    return sanitize_title($slug);
+    return apply_filters('wenprise_converted_slug', sanitize_title($slug), $name, $type);
 }
 
 

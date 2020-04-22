@@ -74,6 +74,13 @@ class SlugTest extends WP_UnitTestCase
 
         $this->assertEquals('z-s-c-s', wprs_slug_convert('这是 测试 ～ ！'));
         $this->assertEquals('t-i-a-t-z-s-y-g-c-s', wprs_slug_convert('this is a tes 这是一个测试'));
+
+        add_filter('wenprise_converted_slug', function ($name, $type)
+        {
+            return $name . 99;
+        }, 10, 2);
+
+        $this->assertEquals('z-s-c-s99', wprs_slug_convert('这是 测试 ～ ！'));
     }
 
 
@@ -103,7 +110,7 @@ class SlugTest extends WP_UnitTestCase
 
         update_option('wprs_pinyin_slug', $option);
 
-        $this->assertEquals('hot-30-days', wprs_slug_convert('30天热门'));
+        $this->assertEquals('30-days-hot', wprs_slug_convert('30天热门'));
     }
 
 
