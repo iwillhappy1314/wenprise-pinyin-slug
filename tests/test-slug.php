@@ -75,10 +75,10 @@ class SlugTest extends WP_UnitTestCase
         $this->assertEquals('z-s-c-s', wprs_slug_convert('这是 测试 ～ ！'));
         $this->assertEquals('t-i-a-t-z-s-y-g-c-s', wprs_slug_convert('this is a tes 这是一个测试'));
 
-        add_filter('wenprise_converted_slug', function ($name, $type)
+        add_filter('wenprise_converted_slug', function ($slug, $name, $type)
         {
-            return $name . 99;
-        }, 10, 2);
+            return $slug . 99;
+        }, 10, 3);
 
         $this->assertEquals('z-s-c-s99', wprs_slug_convert('这是 测试 ～ ！'));
     }

@@ -21,7 +21,7 @@ jobs:
           composer global require "phpunit/phpunit=4.8.*|5.7.*"
           phpunit
       - name: WordPress Plugin Deploy
-        uses: 10up/action-wordpress-plugin-deploy@master
+        uses: iwillhappy1314/action-wordpress-plugin-deploy@master
         env:
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
