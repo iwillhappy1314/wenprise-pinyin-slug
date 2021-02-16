@@ -5,7 +5,7 @@ Tags: slug, pinyin,别名,中文字符,Pinyin Attachment Name,Pinyin Slugs,Pinyi
 Requires at least: 3.4
 Requires PHP: 5.6.0
 Tested up to: 5.4
-Stable tag: 1.5.2
+Stable tag: 1.5.3
 Domain Path: languages
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -60,7 +60,11 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 3. 文件名自动转换
 
 ## Changelog ##
-### 1.5.1 ###
+
+### 1.5.3 ###
+* 增加对 wp_insert_post 函数的支持
+
+### 1.5.2 ###
 * 增加 wenprise_converted_slug Filter，允许第三方代码修改转换后的别名
 
 ### 1.5.1 ###
