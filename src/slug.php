@@ -17,22 +17,22 @@ use Overtrue\Pinyin\Pinyin;
 // }, 10, 3);
 
 
-// add_filter('wp_unique_post_slug', function ($slug, $post_ID, $post_status, $post_type, $post_parent, $original_slug)
-// {
-//     if($post_ID === 0){
-//         return $slug;
-//     }
-//
-//     var_dump($post_ID);
-//
-//     $post = get_post($post_ID);
-//
-//     if ($post->post_type === 'attachment') {
-//         return $slug;
-//     }
-//
-//     return wprs_slug_convert($post->post_name);
-// }, 10, 6);
+add_filter('wp_unique_post_slug', function ($slug, $post_ID, $post_status, $post_type, $post_parent, $original_slug)
+{
+    // 不处理附件别名
+    if ($post_type === 'attachment') {
+        return $slug;
+    }
+
+    // 还原编码前的别名
+    $decoded_slug = urldecode($slug);
+
+    if (preg_match('/[\x{4e00}-\x{9fa5}]+/u', $decoded_slug)) {
+        $slug = urlencode(wprs_slug_convert($decoded_slug));
+    }
+
+    return $slug;
+}, 10, 6);
 
 
 /**
@@ -296,7 +296,7 @@ if ( ! function_exists('wprs_slug_pinyin_convert')) {
         $pinyin = new Pinyin();
 
         if ($type === 0) {
-            $slug = $pinyin->permalink($name, $divider);
+            $slug = $pinyin->permalink($name, $divider, PINYIN_KEEP_ENGLISH);
         } else {
             $slug = $pinyin->abbr($name, $divider, PINYIN_KEEP_ENGLISH);
         }

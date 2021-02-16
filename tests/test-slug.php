@@ -110,7 +110,7 @@ class SlugTest extends WP_UnitTestCase
 
         update_option('wprs_pinyin_slug', $option);
 
-        $this->assertEquals('30-days-hot', wprs_slug_convert('30天热门'));
+        $this->assertEquals('popular-in-30-days', wprs_slug_convert('30天热门'));
     }
 
 
@@ -130,29 +130,36 @@ class SlugTest extends WP_UnitTestCase
     /**
      * 测试 wp_insert_post 函数
      */
-    // public function test_wp_insert_post()
-    // {
-    //     $post_id = wp_insert_post([
-    //         'post_title'  => '中文标题',
-    //         'post_status' => 'publish',
-    //     ]);
-    //
-    //     $post = get_post($post_id);
-    //
-    //     $this->assertEquals($post->post_name, wprs_slug_convert('中文标题'));
-    // }
+    public function test_wp_insert_post()
+    {
+        $post_id = wp_insert_post([
+            'post_title'  => '中文标题',
+            'post_status' => 'publish',
+        ]);
+
+        $post_id2 = wp_insert_post([
+            'post_title'  => '中文标题',
+            'post_status' => 'publish',
+        ]);
+
+        $post = get_post($post_id);
+        $post2 = get_post($post_id2);
+
+        $this->assertEquals($post->post_name, wprs_slug_convert('中文标题'));
+        $this->assertEquals($post->post_name, wprs_slug_convert('中文标题'));
+    }
 
 
     /**
      * 测试文章别名转换
      */
-    // public function test_post_slug_convert()
-    // {
-    //     $post           = get_post($this->post_id);
-    //     $slug_converted = wprs_slug_convert($post->post_title);
-    //
-    //     $this->assertEquals($post->post_name, $slug_converted);
-    // }
+    public function test_post_slug_convert()
+    {
+        $post           = get_post($this->post_id);
+        $slug_converted = wprs_slug_convert($post->post_title);
+
+        $this->assertEquals($post->post_name, $slug_converted);
+    }
 
 
     /**
