@@ -6,6 +6,9 @@
     "overtrue/pinyin": "^4.0",
     "tareq1988/wordpress-settings-api-class": "^1.2"
   },
+  "require-dev": {
+    "phpunit/phpunit": "7.*"
+  },
   "autoload": {
     "psr-4": {
     },
