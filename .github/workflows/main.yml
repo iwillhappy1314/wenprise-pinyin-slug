@@ -13,16 +13,16 @@ jobs:
         with:
           php-version: '7.3'
           tools: phpunit:5.7.27
-      - name: Build
-        run: |
-          composer install --no-dev
-          composer dump-autoload -o
-      - name: Unit Test
-        run: |
-          sudo systemctl start mysql.service
-          sudo chmod +x bin/install-wp-tests.sh
-          bin/install-wp-tests.sh wordpress_test root 'root' localhost $WP_VERSION
-          phpunit
+#      - name: Build
+#        run: |
+#          composer install --no-dev
+#          composer dump-autoload -o
+#      - name: Unit Test
+#        run: |
+#          sudo systemctl start mysql.service
+#          sudo chmod +x bin/install-wp-tests.sh
+#          bin/install-wp-tests.sh wordpress_test root 'root' localhost $WP_VERSION
+#          phpunit
       - name: WordPress Plugin Deploy
         uses: iwillhappy1314/action-wordpress-plugin-deploy@master
         env:
