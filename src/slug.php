@@ -51,7 +51,7 @@ add_filter('name_save_pre', function ($slug)
     }
 
     // 替换文章标题
-    return wprs_slug_convert($_POST[ 'post_title' ], 'post');
+    return wprs_slug_convert($_POST[ 'post_title' ] ?? '', 'post');
 }, 10, 1);
 
 
