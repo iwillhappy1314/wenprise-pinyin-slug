@@ -192,7 +192,7 @@ add_filter('wp_update_term_data', function ($data, $term_id, $taxonomy, $args)
  *
  * @return mixed
  */
-add_filter('sanitize_file_name111', function ($filename)
+add_filter('sanitize_file_name', function ($filename)
 {
     $disable_file_convert = wprs_slug_get_option('wprs_pinyin_slug', 'disable_file_convert', 'off');
 
