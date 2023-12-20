@@ -8,7 +8,7 @@ class Integrate
     public function __construct()
     {
         add_filter('wp_unique_post_slug', [$this, 'wp_unique_post_slug'], 10, 6);
-        add_filter('name_save_pre', [$this, 'name_save_pre'], 10, 1);
+        add_filter('name_save_pre', [$this, 'name_save_pre']);
 
         add_filter('rest_pre_insert_post', [$this, 'convert_rest_slug'], 10, 2);
         add_filter('rest_pre_insert_page', [$this, 'convert_rest_slug'], 10, 2);
@@ -66,7 +66,7 @@ class Integrate
         }
 
         // 替换文章标题
-        return Helpers::slug_convert($_POST[ 'post_title' ] ? : '', 'post');
+        return Helpers::slug_convert($_POST[ 'post_title' ] ? : '');
     }
 
 
@@ -105,7 +105,7 @@ class Integrate
             if ($saved_post && $saved_post->post_name === '') {
 
                 if (empty($request[ 'slug' ])) {
-                    $prepared_post->post_name = Helpers::slug_convert($post_title, 'post');
+                    $prepared_post->post_name = Helpers::slug_convert($post_title);
                 }
 
             }
@@ -116,7 +116,7 @@ class Integrate
             if ( ! $saved_post || $saved_post->post_status !== 'publish') {
                 // 2. 其他状态下，如果没有设置 slug, 或 slug 为空，自动生成，如果设置了 slug ,依然不自动生成
                 if (empty($request[ 'slug' ])) {
-                    $prepared_post->post_name = Helpers::slug_convert($post_title, 'post');
+                    $prepared_post->post_name = Helpers::slug_convert($post_title);
                 }
             }
 
