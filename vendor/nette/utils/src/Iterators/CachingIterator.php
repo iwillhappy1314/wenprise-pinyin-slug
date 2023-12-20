@@ -5,8 +5,6 @@
  * Copyright (c) 2004 David Grudl (https://davidgrudl.com)
  */
 
-declare(strict_types=1);
-
 namespace Nette\Iterators;
 
 use Nette;
@@ -42,13 +40,12 @@ class CachingIterator extends \CachingIterator implements \Countable
 				$iterator = $iterator->getIterator();
 			} while ($iterator instanceof \IteratorAggregate);
 
-			assert($iterator instanceof \Iterator);
-
-		} elseif ($iterator instanceof \Iterator) {
 		} elseif ($iterator instanceof \Traversable) {
-			$iterator = new \IteratorIterator($iterator);
+			if (!$iterator instanceof \Iterator) {
+				$iterator = new \IteratorIterator($iterator);
+			}
 		} else {
-			throw new Nette\InvalidArgumentException(sprintf('Invalid argument passed to %s; array or Traversable expected, %s given.', self::class, is_object($iterator) ? get_class($iterator) : gettype($iterator)));
+			throw new Nette\InvalidArgumentException(sprintf('Invalid argument passed to %s; array or Traversable expected, %s given.', __CLASS__, is_object($iterator) ? get_class($iterator) : gettype($iterator)));
 		}
 
 		parent::__construct($iterator, 0);
@@ -57,26 +54,31 @@ class CachingIterator extends \CachingIterator implements \Countable
 
 	/**
 	 * Is the current element the first one?
+	 * @param  int  grid width
+	 * @return bool
 	 */
-	public function isFirst(?int $gridWidth = null): bool
+	public function isFirst($width = null)
 	{
-		return $this->counter === 1 || ($gridWidth && $this->counter !== 0 && (($this->counter - 1) % $gridWidth) === 0);
+		return $this->counter === 1 || ($width && $this->counter !== 0 && (($this->counter - 1) % $width) === 0);
 	}
 
 
 	/**
 	 * Is the current element the last one?
+	 * @param  int  grid width
+	 * @return bool
 	 */
-	public function isLast(?int $gridWidth = null): bool
+	public function isLast($width = null)
 	{
-		return !$this->hasNext() || ($gridWidth && ($this->counter % $gridWidth) === 0);
+		return !$this->hasNext() || ($width && ($this->counter % $width) === 0);
 	}
 
 
 	/**
 	 * Is the iterator empty?
+	 * @return bool
 	 */
-	public function isEmpty(): bool
+	public function isEmpty()
 	{
 		return $this->counter === 0;
 	}
@@ -84,8 +86,9 @@ class CachingIterator extends \CachingIterator implements \Countable
 
 	/**
 	 * Is the counter odd?
+	 * @return bool
 	 */
-	public function isOdd(): bool
+	public function isOdd()
 	{
 		return $this->counter % 2 === 1;
 	}
@@ -93,8 +96,9 @@ class CachingIterator extends \CachingIterator implements \Countable
 
 	/**
 	 * Is the counter even?
+	 * @return bool
 	 */
-	public function isEven(): bool
+	public function isEven()
 	{
 		return $this->counter % 2 === 0;
 	}
@@ -102,8 +106,9 @@ class CachingIterator extends \CachingIterator implements \Countable
 
 	/**
 	 * Returns the counter.
+	 * @return int
 	 */
-	public function getCounter(): int
+	public function getCounter()
 	{
 		return $this->counter;
 	}
@@ -111,8 +116,9 @@ class CachingIterator extends \CachingIterator implements \Countable
 
 	/**
 	 * Returns the count of elements.
+	 * @return int
 	 */
-	public function count(): int
+	public function count()
 	{
 		$inner = $this->getInnerIterator();
 		if ($inner instanceof \Countable) {
@@ -126,8 +132,9 @@ class CachingIterator extends \CachingIterator implements \Countable
 
 	/**
 	 * Forwards to the next element.
+	 * @return void
 	 */
-	public function next(): void
+	public function next()
 	{
 		parent::next();
 		if (parent::valid()) {
@@ -138,8 +145,9 @@ class CachingIterator extends \CachingIterator implements \Countable
 
 	/**
 	 * Rewinds the Iterator.
+	 * @return void
 	 */
-	public function rewind(): void
+	public function rewind()
 	{
 		parent::rewind();
 		$this->counter = parent::valid() ? 1 : 0;

@@ -5,8 +5,6 @@
  * Copyright (c) 2004 David Grudl (https://davidgrudl.com)
  */
 
-declare(strict_types=1);
-
 namespace Nette\Utils;
 
 use Nette;
@@ -14,38 +12,19 @@ use Nette;
 
 /**
  * Provides the base class for a generic list (items can be accessed by index).
- * @template T
  */
 class ArrayList implements \ArrayAccess, \Countable, \IteratorAggregate
 {
 	use Nette\SmartObject;
 
-	/** @var mixed[] */
 	private $list = [];
 
 
 	/**
-	 * Transforms array to ArrayList.
-	 * @param  array<T>  $array
-	 * @return static
-	 */
-	public static function from(array $array)
-	{
-		if (!Arrays::isList($array)) {
-			throw new Nette\InvalidArgumentException('Array is not valid list.');
-		}
-
-		$obj = new static;
-		$obj->list = $array;
-		return $obj;
-	}
-
-
-	/**
 	 * Returns an iterator over all items.
-	 * @return \ArrayIterator<int, T>
+	 * @return \ArrayIterator
 	 */
-	public function getIterator(): \ArrayIterator
+	public function getIterator()
 	{
 		return new \ArrayIterator($this->list);
 	}
@@ -53,8 +32,9 @@ class ArrayList implements \ArrayAccess, \Countable, \IteratorAggregate
 
 	/**
 	 * Returns items count.
+	 * @return int
 	 */
-	public function count(): int
+	public function count()
 	{
 		return count($this->list);
 	}
@@ -62,16 +42,21 @@ class ArrayList implements \ArrayAccess, \Countable, \IteratorAggregate
 
 	/**
 	 * Replaces or appends a item.
-	 * @param  int|null  $index
-	 * @param  T  $value
+	 * @param  int|null
+	 * @param  mixed
+	 * @return void
 	 * @throws Nette\OutOfRangeException
 	 */
-	public function offsetSet($index, $value): void
+	public function offsetSet($index, $value)
 	{
+		if ($index !== null && !is_int($index)) {
+			trigger_error('Index is not integer.', E_USER_NOTICE);
+			$index = (int) $index;
+		}
 		if ($index === null) {
 			$this->list[] = $value;
 
-		} elseif (!is_int($index) || $index < 0 || $index >= count($this->list)) {
+		} elseif ($index < 0 || $index >= count($this->list)) {
 			throw new Nette\OutOfRangeException('Offset invalid or out of range');
 
 		} else {
@@ -82,51 +67,59 @@ class ArrayList implements \ArrayAccess, \Countable, \IteratorAggregate
 
 	/**
 	 * Returns a item.
-	 * @param  int  $index
-	 * @return T
+	 * @param  int
+	 * @return mixed
 	 * @throws Nette\OutOfRangeException
 	 */
-	#[\ReturnTypeWillChange]
 	public function offsetGet($index)
 	{
-		if (!is_int($index) || $index < 0 || $index >= count($this->list)) {
+		if (!is_int($index)) {
+			trigger_error('Index is not integer.', E_USER_NOTICE);
+			$index = (int) $index;
+		}
+		if ($index < 0 || $index >= count($this->list)) {
 			throw new Nette\OutOfRangeException('Offset invalid or out of range');
 		}
-
 		return $this->list[$index];
 	}
 
 
 	/**
 	 * Determines whether a item exists.
-	 * @param  int  $index
+	 * @param  int
+	 * @return bool
 	 */
-	public function offsetExists($index): bool
+	public function offsetExists($index)
 	{
-		return is_int($index) && $index >= 0 && $index < count($this->list);
+		return $index >= 0 && $index < count($this->list);
 	}
 
 
 	/**
 	 * Removes the element at the specified position in this list.
-	 * @param  int  $index
+	 * @param  int
+	 * @return void
 	 * @throws Nette\OutOfRangeException
 	 */
-	public function offsetUnset($index): void
+	public function offsetUnset($index)
 	{
-		if (!is_int($index) || $index < 0 || $index >= count($this->list)) {
+		if (!is_int($index)) {
+			trigger_error('Index is not integer.', E_USER_NOTICE);
+			$index = (int) $index;
+		}
+		if ($index < 0 || $index >= count($this->list)) {
 			throw new Nette\OutOfRangeException('Offset invalid or out of range');
 		}
-
 		array_splice($this->list, $index, 1);
 	}
 
 
 	/**
 	 * Prepends a item.
-	 * @param  T  $value
+	 * @param  mixed
+	 * @return void
 	 */
-	public function prepend($value): void
+	public function prepend($value)
 	{
 		$first = array_slice($this->list, 0, 1);
 		$this->offsetSet(0, $value);

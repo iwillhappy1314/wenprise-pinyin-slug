@@ -5,8 +5,6 @@
  * Copyright (c) 2004 David Grudl (https://davidgrudl.com)
  */
 
-declare(strict_types=1);
-
 namespace Nette\Utils;
 
 use Nette;
@@ -14,33 +12,34 @@ use Nette;
 
 /**
  * Provides objects to work as array.
- * @template T
  */
 class ArrayHash extends \stdClass implements \ArrayAccess, \Countable, \IteratorAggregate
 {
+
 	/**
-	 * Transforms array to ArrayHash.
-	 * @param  array<T>  $array
+	 * @param  array to wrap
+	 * @param  bool
 	 * @return static
 	 */
-	public static function from(array $array, bool $recursive = true)
+	public static function from($arr, $recursive = true)
 	{
 		$obj = new static;
-		foreach ($array as $key => $value) {
-			$obj->$key = $recursive && is_array($value)
-				? static::from($value, true)
-				: $value;
+		foreach ($arr as $key => $value) {
+			if ($recursive && is_array($value)) {
+				$obj->$key = static::from($value, true);
+			} else {
+				$obj->$key = $value;
+			}
 		}
-
 		return $obj;
 	}
 
 
 	/**
 	 * Returns an iterator over all items.
-	 * @return \RecursiveArrayIterator<array-key, T>
+	 * @return \RecursiveArrayIterator
 	 */
-	public function getIterator(): \RecursiveArrayIterator
+	public function getIterator()
 	{
 		return new \RecursiveArrayIterator((array) $this);
 	}
@@ -48,8 +47,9 @@ class ArrayHash extends \stdClass implements \ArrayAccess, \Countable, \Iterator
 
 	/**
 	 * Returns items count.
+	 * @return int
 	 */
-	public function count(): int
+	public function count()
 	{
 		return count((array) $this);
 	}
@@ -57,25 +57,21 @@ class ArrayHash extends \stdClass implements \ArrayAccess, \Countable, \Iterator
 
 	/**
 	 * Replaces or appends a item.
-	 * @param  string|int  $key
-	 * @param  T  $value
+	 * @return void
 	 */
-	public function offsetSet($key, $value): void
+	public function offsetSet($key, $value)
 	{
 		if (!is_scalar($key)) { // prevents null
 			throw new Nette\InvalidArgumentException(sprintf('Key must be either a string or an integer, %s given.', gettype($key)));
 		}
-
 		$this->$key = $value;
 	}
 
 
 	/**
 	 * Returns a item.
-	 * @param  string|int  $key
-	 * @return T
+	 * @return mixed
 	 */
-	#[\ReturnTypeWillChange]
 	public function offsetGet($key)
 	{
 		return $this->$key;
@@ -84,9 +80,9 @@ class ArrayHash extends \stdClass implements \ArrayAccess, \Countable, \Iterator
 
 	/**
 	 * Determines whether a item exists.
-	 * @param  string|int  $key
+	 * @return bool
 	 */
-	public function offsetExists($key): bool
+	public function offsetExists($key)
 	{
 		return isset($this->$key);
 	}
@@ -94,9 +90,9 @@ class ArrayHash extends \stdClass implements \ArrayAccess, \Countable, \Iterator
 
 	/**
 	 * Removes the element from this list.
-	 * @param  string|int  $key
+	 * @return void
 	 */
-	public function offsetUnset($key): void
+	public function offsetUnset($key)
 	{
 		unset($this->$key);
 	}

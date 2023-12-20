@@ -5,16 +5,13 @@
     "php": ">=5.6",
     "overtrue/pinyin": "^4.0",
     "tareq1988/wordpress-settings-api-class": "^1.2",
-    "nette/utils": "^3.2",
+    "nette/utils": "^2.4",
     "nette/finder": "^2.6"
   },
   "autoload": {
     "psr-4": {
-    },
-    "files": [
-      "src/settings.php",
-      "src/slug.php"
-    ]
+      "WenprisePinyinSlug\\": "src/"
+    }
   },
   "license": "MIT",
   "authors": [

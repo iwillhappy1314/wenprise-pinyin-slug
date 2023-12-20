@@ -58,8 +58,8 @@ class SlugTest extends WP_UnitTestCase
      */
     public function test_wprs_full_slug_convert()
     {
-        $this->assertEquals('zhe-shi-ce-shi', wprs_slug_convert('这是 测试 ～ ！'));
-        $this->assertEquals('this-is-a-tes-zhe-shi-yi-ge-ce-shi', wprs_slug_convert('this is a tes 这是一个测试'));
+        $this->assertEquals('zhe-shi-ce-shi', \WenprisePinyinSlug\Helpers::slug_convert('这是 测试 ～ ！'));
+        $this->assertEquals('this-is-a-tes-zhe-shi-yi-ge-ce-shi', \WenprisePinyinSlug\Helpers::slug_convert('this is a tes 这是一个测试'));
     }
 
 
@@ -72,15 +72,15 @@ class SlugTest extends WP_UnitTestCase
         $option[ 'type' ] = 1;
         update_option('wprs_pinyin_slug', $option);
 
-        $this->assertEquals('z-s-c-s', wprs_slug_convert('这是 测试 ～ ！'));
-        $this->assertEquals('t-i-a-t-z-s-y-g-c-s', wprs_slug_convert('this is a tes 这是一个测试'));
+        $this->assertEquals('z-s-c-s', \WenprisePinyinSlug\Helpers::slug_convert('这是 测试 ～ ！'));
+        $this->assertEquals('t-i-a-t-z-s-y-g-c-s', \WenprisePinyinSlug\Helpers::slug_convert('this is a tes 这是一个测试'));
 
         add_filter('wenprise_converted_slug', function ($slug, $name, $type)
         {
             return $slug . 99;
         }, 10, 3);
 
-        $this->assertEquals('z-s-c-s99', wprs_slug_convert('这是 测试 ～ ！'));
+        $this->assertEquals('z-s-c-s99', \WenprisePinyinSlug\Helpers::slug_convert('这是 测试 ～ ！'));
     }
 
 
@@ -94,7 +94,7 @@ class SlugTest extends WP_UnitTestCase
         $option[ 'divider' ] = '_';
         update_option('wprs_pinyin_slug', $option);
 
-        $this->assertEquals('z_s_c_s', wprs_slug_convert('这是 测试 ～ ！'));
+        $this->assertEquals('z_s_c_s', \WenprisePinyinSlug\Helpers::slug_convert('这是 测试 ～ ！'));
     }
 
 
@@ -110,7 +110,7 @@ class SlugTest extends WP_UnitTestCase
 
         update_option('wprs_pinyin_slug', $option);
 
-        $this->assertEquals('popular-in-30-days', wprs_slug_convert('30天热门'));
+        $this->assertEquals('popular-in-30-days', \WenprisePinyinSlug\Helpers::slug_convert('30天热门'));
     }
 
 
@@ -122,8 +122,8 @@ class SlugTest extends WP_UnitTestCase
         $slug   = 'this-is-a-test-for-limit-slug-length';
         $length = 13;
 
-        $this->assertLessThan($length, strlen(wprs_trim_slug($slug, $length)));
-        $this->assertSame(strpos($slug, wprs_trim_slug($slug, $length)), 0);
+        $this->assertLessThan($length, strlen(\WenprisePinyinSlug\Helpers::trim_slug($slug, $length)));
+        $this->assertSame(strpos($slug, \WenprisePinyinSlug\Helpers::trim_slug($slug, $length)), 0);
     }
 
 
@@ -145,8 +145,8 @@ class SlugTest extends WP_UnitTestCase
         $post = get_post($post_id);
         $post2 = get_post($post_id2);
 
-        $this->assertEquals($post->post_name, wprs_slug_convert('中文标题'));
-        $this->assertEquals($post->post_name, wprs_slug_convert('中文标题'));
+        $this->assertEquals($post->post_name, \WenprisePinyinSlug\Helpers::slug_convert('中文标题'));
+        $this->assertEquals($post->post_name, \WenprisePinyinSlug\Helpers::slug_convert('中文标题'));
     }
 
 
@@ -156,7 +156,7 @@ class SlugTest extends WP_UnitTestCase
     public function test_post_slug_convert()
     {
         $post           = get_post($this->post_id);
-        $slug_converted = wprs_slug_convert($post->post_title);
+        $slug_converted = \WenprisePinyinSlug\Helpers::slug_convert($post->post_title);
 
         $this->assertEquals($post->post_name, $slug_converted);
     }
@@ -171,9 +171,9 @@ class SlugTest extends WP_UnitTestCase
         $category2 = get_term_by('id', $this->cat_id2, 'category');
         $tag       = get_term_by('id', $this->tag_id, 'post_tag');
 
-        $this->assertEquals($category->slug, wprs_slug_convert($category->name));
-        $this->assertEquals($category2->slug, wprs_slug_convert($category2->name));
-        $this->assertEquals($tag->slug, wprs_slug_convert($tag->name));
+        $this->assertEquals($category->slug, \WenprisePinyinSlug\Helpers::slug_convert($category->name));
+        $this->assertEquals($category2->slug, \WenprisePinyinSlug\Helpers::slug_convert($category2->name));
+        $this->assertEquals($tag->slug, \WenprisePinyinSlug\Helpers::slug_convert($tag->name));
     }
 
 
@@ -186,8 +186,8 @@ class SlugTest extends WP_UnitTestCase
         $file2 = get_post($this->file_id2);
         $file3 = get_post($this->file_id3);
 
-        $slug_converted  = wprs_slug_convert('中文图片名称');
-        $slug_converted3 = wprs_slug_convert('中文图片名称多后缀.test');
+        $slug_converted  = \WenprisePinyinSlug\Helpers::slug_convert('中文图片名称');
+        $slug_converted3 = \WenprisePinyinSlug\Helpers::slug_convert('中文图片名称多后缀.test');
 
         $this->assertEquals(strpos($file->post_name, $slug_converted), 0);
         $this->assertEquals(strpos($file3->post_name, $slug_converted3), 0);
@@ -199,7 +199,7 @@ class SlugTest extends WP_UnitTestCase
      */
     public function test_wprs_plugin_get_option()
     {
-        $this->assertEquals(34, wprs_slug_get_option('wprs_pinyin_slug', 'length', 34));
+        $this->assertEquals(34, \WenprisePinyinSlug\Helpers::get_option('wprs_pinyin_slug', 'length', 34));
     }
 
 }

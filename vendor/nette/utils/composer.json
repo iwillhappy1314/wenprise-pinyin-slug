@@ -1,9 +1,9 @@
 {
 	"name": "nette/utils",
-	"description": "🛠  Nette Utils: lightweight utilities for string & array manipulation, image handling, safe JSON encoding/decoding, validation, slug or strong password generating etc.",
+	"description": "🛠 Nette Utils: lightweight utilities for string & array manipulation, image handling, safe JSON encoding/decoding, validation, slug or strong password generating etc.",
 	"keywords": ["nette", "images", "json", "password", "validation", "utility", "string", "array", "core", "slugify", "utf-8", "unicode", "paginator", "datetime"],
 	"homepage": "https://nette.org",
-	"license": ["BSD-3-Clause", "GPL-2.0-only", "GPL-3.0-only"],
+	"license": ["BSD-3-Clause", "GPL-2.0", "GPL-3.0"],
 	"authors": [
 		{
 			"name": "David Grudl",
@@ -15,37 +15,31 @@
 		}
 	],
 	"require": {
-		"php": ">=7.2 <8.3"
+		"php": ">=5.6.0"
 	},
 	"require-dev": {
 		"nette/tester": "~2.0",
-		"tracy/tracy": "^2.3",
-		"phpstan/phpstan": "^1.0",
-		"jetbrains/phpstorm-attributes": "dev-master"
-	},
-	"conflict": {
-		"nette/di": "<3.0.6"
+		"tracy/tracy": "^2.3"
 	},
 	"suggest": {
-		"ext-iconv": "to use Strings::webalize(), toAscii(), chr() and reverse()",
+		"ext-iconv": "to use Strings::webalize() and toAscii()",
 		"ext-json": "to use Nette\\Utils\\Json",
-		"ext-intl": "to use Strings::webalize(), toAscii(), normalize() and compare()",
+		"ext-intl": "for script transliteration in Strings::webalize() and toAscii()",
 		"ext-mbstring": "to use Strings::lower() etc...",
 		"ext-xml": "to use Strings::length() etc. when mbstring is not available",
-		"ext-gd": "to use Image",
-		"ext-tokenizer": "to use Nette\\Utils\\Reflection::getUseStatements()"
+		"ext-gd": "to use Image"
+	},
+	"conflict": {
+		"nette/nette": "<2.2"
 	},
 	"autoload": {
-		"classmap": ["src/"]
+		"classmap": ["src/"],
+		"files": ["src/loader.php"]
 	},
 	"minimum-stability": "dev",
-	"scripts": {
-		"phpstan": "phpstan analyse",
-		"tester": "tester tests -s"
-	},
 	"extra": {
 		"branch-alias": {
-			"dev-master": "3.2-dev"
+			"dev-master": "2.5-dev"
 		}
 	}
 }

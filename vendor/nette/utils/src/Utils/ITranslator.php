@@ -5,23 +5,20 @@
  * Copyright (c) 2004 David Grudl (https://davidgrudl.com)
  */
 
-declare(strict_types=1);
-
 namespace Nette\Localization;
 
 
 /**
  * Translator adapter.
  */
-interface Translator
+interface ITranslator
 {
+
 	/**
 	 * Translates the given string.
-	 * @param  mixed  $message
-	 * @param  mixed  ...$parameters
+	 * @param  mixed    message
+	 * @param  int      plural count
+	 * @return string
 	 */
-	function translate($message, ...$parameters): string;
+	function translate($message, $count = null);
 }
-
-
-interface_exists(ITranslator::class);

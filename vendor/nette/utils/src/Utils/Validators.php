@@ -5,8 +5,6 @@
  * Copyright (c) 2004 David Grudl (https://davidgrudl.com)
  */
 
-declare(strict_types=1);
-
 namespace Nette\Utils;
 
 use Nette;
@@ -19,63 +17,41 @@ class Validators
 {
 	use Nette\StaticClass;
 
-	private const BuiltinTypes = [
-		'string' => 1, 'int' => 1, 'float' => 1, 'bool' => 1, 'array' => 1, 'object' => 1,
-		'callable' => 1, 'iterable' => 1, 'void' => 1, 'null' => 1, 'mixed' => 1, 'false' => 1,
-		'never' => 1, 'true' => 1,
-	];
-
-	/** @var array<string,?callable> */
 	protected static $validators = [
-		// PHP types
-		'array' => 'is_array',
 		'bool' => 'is_bool',
 		'boolean' => 'is_bool',
-		'float' => 'is_float',
 		'int' => 'is_int',
 		'integer' => 'is_int',
-		'null' => 'is_null',
+		'float' => 'is_float',
+		'number' => [__CLASS__, 'isNumber'],
+		'numeric' => [__CLASS__, 'isNumeric'],
+		'numericint' => [__CLASS__, 'isNumericInt'],
+		'string' => 'is_string',
+		'unicode' => [__CLASS__, 'isUnicode'],
+		'array' => 'is_array',
+		'list' => [Arrays::class, 'isList'],
 		'object' => 'is_object',
 		'resource' => 'is_resource',
 		'scalar' => 'is_scalar',
-		'string' => 'is_string',
-
-		// pseudo-types
-		'callable' => [self::class, 'isCallable'],
-		'iterable' => 'is_iterable',
-		'list' => [Arrays::class, 'isList'],
-		'mixed' => [self::class, 'isMixed'],
-		'none' => [self::class, 'isNone'],
-		'number' => [self::class, 'isNumber'],
-		'numeric' => [self::class, 'isNumeric'],
-		'numericint' => [self::class, 'isNumericInt'],
-
-		// string patterns
+		'callable' => [__CLASS__, 'isCallable'],
+		'null' => 'is_null',
+		'email' => [__CLASS__, 'isEmail'],
+		'url' => [__CLASS__, 'isUrl'],
+		'uri' => [__CLASS__, 'isUri'],
+		'none' => [__CLASS__, 'isNone'],
+		'type' => [__CLASS__, 'isType'],
+		'identifier' => [__CLASS__, 'isPhpIdentifier'],
+		'pattern' => null,
 		'alnum' => 'ctype_alnum',
 		'alpha' => 'ctype_alpha',
 		'digit' => 'ctype_digit',
 		'lower' => 'ctype_lower',
-		'pattern' => null,
-		'space' => 'ctype_space',
-		'unicode' => [self::class, 'isUnicode'],
 		'upper' => 'ctype_upper',
+		'space' => 'ctype_space',
 		'xdigit' => 'ctype_xdigit',
-
-		// syntax validation
-		'email' => [self::class, 'isEmail'],
-		'identifier' => [self::class, 'isPhpIdentifier'],
-		'uri' => [self::class, 'isUri'],
-		'url' => [self::class, 'isUrl'],
-
-		// environment validation
-		'class' => 'class_exists',
-		'interface' => 'interface_exists',
-		'directory' => 'is_dir',
-		'file' => 'is_file',
-		'type' => [self::class, 'isType'],
+		'iterable' => [__CLASS__, 'isIterable'],
 	];
 
-	/** @var array<string,callable> */
 	protected static $counters = [
 		'string' => 'strlen',
 		'unicode' => [Strings::class, 'length'],
@@ -92,83 +68,75 @@ class Validators
 
 
 	/**
-	 * Verifies that the value is of expected types separated by pipe.
-	 * @param  mixed  $value
-	 * @throws AssertionException
+	 * Throws exception if a variable is of unexpected type.
+	 * @param  mixed
+	 * @param  string  expected types separated by pipe
+	 * @param  string  label
+	 * @return void
 	 */
-	public static function assert($value, string $expected, string $label = 'variable'): void
+	public static function assert($value, $expected, $label = 'variable')
 	{
 		if (!static::is($value, $expected)) {
 			$expected = str_replace(['|', ':'], [' or ', ' in range '], $expected);
-			$translate = ['boolean' => 'bool', 'integer' => 'int', 'double' => 'float', 'NULL' => 'null'];
-			$type = $translate[gettype($value)] ?? gettype($value);
-			if (is_int($value) || is_float($value) || (is_string($value) && strlen($value) < 40)) {
-				$type .= ' ' . var_export($value, true);
+			if (is_array($value)) {
+				$type = 'array(' . count($value) . ')';
 			} elseif (is_object($value)) {
-				$type .= ' ' . get_class($value);
+				$type = 'object ' . get_class($value);
+			} elseif (is_string($value) && strlen($value) < 40) {
+				$type = "string '$value'";
+			} else {
+				$type = gettype($value);
 			}
-
 			throw new AssertionException("The $label expects to be $expected, $type given.");
 		}
 	}
 
 
 	/**
-	 * Verifies that element $key in array is of expected types separated by pipe.
-	 * @param  mixed[]  $array
-	 * @param  int|string  $key
-	 * @throws AssertionException
+	 * Throws exception if an array field is missing or of unexpected type.
+	 * @param  array
+	 * @param  string  item
+	 * @param  string  expected types separated by pipe
+	 * @param  string
+	 * @return void
 	 */
-	public static function assertField(
-		array $array,
-		$key,
-		?string $expected = null,
-		string $label = "item '%' in array"
-	): void
+	public static function assertField($arr, $field, $expected = null, $label = "item '%' in array")
 	{
-		if (!array_key_exists($key, $array)) {
-			throw new AssertionException('Missing ' . str_replace('%', $key, $label) . '.');
+		self::assert($arr, 'array', 'first argument');
+		if (!array_key_exists($field, $arr)) {
+			throw new AssertionException('Missing ' . str_replace('%', $field, $label) . '.');
 
 		} elseif ($expected) {
-			static::assert($array[$key], $expected, str_replace('%', $key, $label));
+			static::assert($arr[$field], $expected, str_replace('%', $field, $label));
 		}
 	}
 
 
 	/**
-	 * Verifies that the value is of expected types separated by pipe.
-	 * @param  mixed  $value
+	 * Finds whether a variable is of expected type.
+	 * @param  mixed
+	 * @param  string  expected types separated by pipe with optional ranges
+	 * @return bool
 	 */
-	public static function is($value, string $expected): bool
+	public static function is($value, $expected)
 	{
 		foreach (explode('|', $expected) as $item) {
 			if (substr($item, -2) === '[]') {
-				if (is_iterable($value) && self::everyIs($value, substr($item, 0, -2))) {
+				if (self::everyIs($value, substr($item, 0, -2))) {
 					return true;
 				}
-
 				continue;
-			} elseif (substr($item, 0, 1) === '?') {
-				$item = substr($item, 1);
-				if ($value === null) {
-					return true;
-				}
 			}
 
-			[$type] = $item = explode(':', $item, 2);
+			list($type) = $item = explode(':', $item, 2);
 			if (isset(static::$validators[$type])) {
-				try {
-					if (!static::$validators[$type]($value)) {
-						continue;
-					}
-				} catch (\TypeError $e) {
+				if (!call_user_func(static::$validators[$type], $value)) {
 					continue;
 				}
 			} elseif ($type === 'pattern') {
-				if (Strings::match($value, '|^' . ($item[1] ?? '') . '$|D')) {
+				if (preg_match('|^' . (isset($item[1]) ? $item[1] : '') . '\z|', $value)) {
 					return true;
 				}
-
 				continue;
 			} elseif (!$value instanceof $type) {
 				continue;
@@ -177,132 +145,126 @@ class Validators
 			if (isset($item[1])) {
 				$length = $value;
 				if (isset(static::$counters[$type])) {
-					$length = static::$counters[$type]($value);
+					$length = call_user_func(static::$counters[$type], $value);
 				}
-
 				$range = explode('..', $item[1]);
 				if (!isset($range[1])) {
 					$range[1] = $range[0];
 				}
-
 				if (($range[0] !== '' && $length < $range[0]) || ($range[1] !== '' && $length > $range[1])) {
 					continue;
 				}
 			}
-
 			return true;
 		}
-
 		return false;
 	}
 
 
 	/**
-	 * Finds whether all values are of expected types separated by pipe.
-	 * @param  mixed[]  $values
+	 * Finds whether all values are of expected type.
+	 * @param  array|\Traversable
+	 * @param  string  expected types separated by pipe with optional ranges
+	 * @return bool
 	 */
-	public static function everyIs(iterable $values, string $expected): bool
+	public static function everyIs($values, $expected)
 	{
+		if (!self::isIterable($values)) {
+			return false;
+		}
 		foreach ($values as $value) {
 			if (!static::is($value, $expected)) {
 				return false;
 			}
 		}
-
 		return true;
 	}
 
 
 	/**
-	 * Checks if the value is an integer or a float.
-	 * @param  mixed  $value
+	 * Finds whether a value is an integer or a float.
+	 * @return bool
 	 */
-	public static function isNumber($value): bool
+	public static function isNumber($value)
 	{
 		return is_int($value) || is_float($value);
 	}
 
 
 	/**
-	 * Checks if the value is an integer or a integer written in a string.
-	 * @param  mixed  $value
+	 * Finds whether a value is an integer.
+	 * @return bool
 	 */
-	public static function isNumericInt($value): bool
+	public static function isNumericInt($value)
 	{
-		return is_int($value) || (is_string($value) && preg_match('#^[+-]?[0-9]+$#D', $value));
+		return is_int($value) || is_string($value) && preg_match('#^-?[0-9]+\z#', $value);
 	}
 
 
 	/**
-	 * Checks if the value is a number or a number written in a string.
-	 * @param  mixed  $value
+	 * Finds whether a string is a floating point number in decimal base.
+	 * @return bool
 	 */
-	public static function isNumeric($value): bool
+	public static function isNumeric($value)
 	{
-		return is_float($value) || is_int($value) || (is_string($value) && preg_match('#^[+-]?([0-9]++\.?[0-9]*|\.[0-9]+)$#D', $value));
+		return is_float($value) || is_int($value) || is_string($value) && preg_match('#^-?[0-9]*[.]?[0-9]+\z#', $value);
 	}
 
 
 	/**
-	 * Checks if the value is a syntactically correct callback.
-	 * @param  mixed  $value
+	 * Finds whether a value is a syntactically correct callback.
+	 * @return bool
 	 */
-	public static function isCallable($value): bool
+	public static function isCallable($value)
 	{
 		return $value && is_callable($value, true);
 	}
 
 
 	/**
-	 * Checks if the value is a valid UTF-8 string.
-	 * @param  mixed  $value
+	 * Finds whether a value is an UTF-8 encoded string.
+	 * @param  string
+	 * @return bool
 	 */
-	public static function isUnicode($value): bool
+	public static function isUnicode($value)
 	{
 		return is_string($value) && preg_match('##u', $value);
 	}
 
 
 	/**
-	 * Checks if the value is 0, '', false or null.
-	 * @param  mixed  $value
+	 * Finds whether a value is "falsy".
+	 * @return bool
 	 */
-	public static function isNone($value): bool
+	public static function isNone($value)
 	{
 		return $value == null; // intentionally ==
 	}
 
 
-	/** @internal */
-	public static function isMixed(): bool
-	{
-		return true;
-	}
-
-
 	/**
-	 * Checks if a variable is a zero-based integer indexed array.
-	 * @param  mixed  $value
-	 * @deprecated  use Nette\Utils\Arrays::isList
+	 * Finds whether a variable is a zero-based integer indexed array.
+	 * @param  array
+	 * @return bool
 	 */
-	public static function isList($value): bool
+	public static function isList($value)
 	{
 		return Arrays::isList($value);
 	}
 
 
 	/**
-	 * Checks if the value is in the given range [min, max], where the upper or lower limit can be omitted (null).
-	 * Numbers, strings and DateTime objects can be compared.
-	 * @param  mixed  $value
+	 * Is a value in specified range?
+	 * @param  mixed
+	 * @param  array  min and max value pair
+	 * @return bool
 	 */
-	public static function isInRange($value, array $range): bool
+	public static function isInRange($value, $range)
 	{
 		if ($value === null || !(isset($range[0]) || isset($range[1]))) {
 			return false;
 		}
-
-		$limit = $range[0] ?? $range[1];
+		$limit = isset($range[0]) ? $range[0] : $range[1];
 		if (is_string($limit)) {
 			$value = (string) $value;
 		} elseif ($limit instanceof \DateTimeInterface) {
@@ -314,67 +276,66 @@ class Validators
 		} else {
 			return false;
 		}
-
 		return (!isset($range[0]) || ($value >= $range[0])) && (!isset($range[1]) || ($value <= $range[1]));
 	}
 
 
 	/**
-	 * Checks if the value is a valid email address. It does not verify that the domain actually exists, only the syntax is verified.
+	 * Finds whether a string is a valid email address.
+	 * @param  string
+	 * @return bool
 	 */
-	public static function isEmail(string $value): bool
+	public static function isEmail($value)
 	{
 		$atom = "[-a-z0-9!#$%&'*+/=?^_`{|}~]"; // RFC 5322 unquoted characters in local-part
 		$alpha = "a-z\x80-\xFF"; // superset of IDN
-		return (bool) preg_match(<<<XX
-		(^
-			("([ !#-[\\]-~]*|\\\\[ -~])+"|$atom+(\\.$atom+)*)  # quoted or unquoted
+		return (bool) preg_match("(^
+			(\"([ !#-[\\]-~]*|\\\\[ -~])+\"|$atom+(\\.$atom+)*)  # quoted or unquoted
 			@
-			([0-9$alpha]([-0-9$alpha]{0,61}[0-9$alpha])?\\.)+  # domain - RFC 1034
-			[$alpha]([-0-9$alpha]{0,17}[$alpha])?              # top domain
-		$)Dix
-XX
-			, $value);
+			([0-9$alpha]([-0-9$alpha]{0,61}[0-9$alpha])?\\.)+    # domain - RFC 1034
+			[$alpha]([-0-9$alpha]{0,17}[$alpha])?                # top domain
+		\\z)ix", $value);
 	}
 
 
 	/**
-	 * Checks if the value is a valid URL address.
+	 * Finds whether a string is a valid http(s) URL.
+	 * @param  string
+	 * @return bool
 	 */
-	public static function isUrl(string $value): bool
+	public static function isUrl($value)
 	{
 		$alpha = "a-z\x80-\xFF";
-		return (bool) preg_match(<<<XX
-		(^
+		return (bool) preg_match("(^
 			https?://(
 				(([-_0-9$alpha]+\\.)*                       # subdomain
 					[0-9$alpha]([-0-9$alpha]{0,61}[0-9$alpha])?\\.)?  # domain
 					[$alpha]([-0-9$alpha]{0,17}[$alpha])?   # top domain
 				|\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}  # IPv4
-				|\\[[0-9a-f:]{3,39}\\]                      # IPv6
+				|\[[0-9a-f:]{3,39}\]                        # IPv6
 			)(:\\d{1,5})?                                   # port
 			(/\\S*)?                                        # path
-			(\\?\\S*)?                                      # query
-			(\\#\\S*)?                                      # fragment
-		$)Dix
-XX
-			, $value);
+		\\z)ix", $value);
 	}
 
 
 	/**
-	 * Checks if the value is a valid URI address, that is, actually a string beginning with a syntactically valid schema.
+	 * Finds whether a string is a valid URI according to RFC 1738.
+	 * @param  string
+	 * @return bool
 	 */
-	public static function isUri(string $value): bool
+	public static function isUri($value)
 	{
-		return (bool) preg_match('#^[a-z\d+\.-]+:\S+$#Di', $value);
+		return (bool) preg_match('#^[a-z\d+\.-]+:\S+\z#i', $value);
 	}
 
 
 	/**
 	 * Checks whether the input is a class, interface or trait.
+	 * @param  string
+	 * @return bool
 	 */
-	public static function isType(string $type): bool
+	public static function isType($type)
 	{
 		return class_exists($type) || interface_exists($type) || trait_exists($type);
 	}
@@ -382,43 +343,20 @@ XX
 
 	/**
 	 * Checks whether the input is a valid PHP identifier.
+	 * @return bool
 	 */
-	public static function isPhpIdentifier(string $value): bool
+	public static function isPhpIdentifier($value)
 	{
-		return preg_match('#^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$#D', $value) === 1;
+		return is_string($value) && preg_match('#^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*\z#', $value);
 	}
 
 
 	/**
-	 * Determines if type is PHP built-in type. Otherwise, it is the class name.
+	 * Returns true if value is iterable (array or instance of Traversable).
+	 * @return bool
 	 */
-	public static function isBuiltinType(string $type): bool
+	private static function isIterable($value)
 	{
-		return isset(self::BuiltinTypes[strtolower($type)]);
-	}
-
-
-	/**
-	 * Determines if type is special class name self/parent/static.
-	 */
-	public static function isClassKeyword(string $name): bool
-	{
-		return (bool) preg_match('#^(self|parent|static)$#Di', $name);
-	}
-
-
-	/**
-	 * Checks whether the given type declaration is syntactically valid.
-	 */
-	public static function isTypeDeclaration(string $type): bool
-	{
-		return (bool) preg_match(<<<'XX'
-		~(
-			\?? (?<type> \\? (?<name> [a-zA-Z_\x7f-\xff][\w\x7f-\xff]*) (\\ (?&name))* ) |
-			(?<intersection> (?&type) (& (?&type))+ ) |
-			(?<upart> (?&type) | \( (?&intersection) \) )  (\| (?&upart))+
-		)$~xAD
-XX
-			, $type);
+		return is_array($value) || $value instanceof \Traversable;
 	}
 }

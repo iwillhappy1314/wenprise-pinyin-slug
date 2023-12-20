@@ -3,16 +3,19 @@
 Plugin Name:        Wenprise Pinyin Slug
 Plugin URI:         https://www.wpzhiku.com/wenprise-pinyin-slug/
 Description:        自动转换 WordPress 中的中文文章别名、分类项目别名、图片文件名称为汉语拼音。
-Version:            1.5.6
+Version:            2.0.0
 Author:             WordPress 智库
 Author URI:         https://www.wpzhiku.com/
-License:            MIT License
+License:            MIT
 License URI:        http://opensource.org/licenses/MIT
 Requires PHP: 5.6
 */
 
+const WPRS_PS_VERSION = '2.0.0';
 define('WPRS_PS_PATH', plugin_dir_path(__FILE__));
-define('WPRS_PS_VERSION', '1.5.3');
+
+// 加载插件主要功能
+require_once(plugin_dir_path(__FILE__) . 'vendor/autoload.php');
 
 add_action('plugins_loaded', function ()
 {
@@ -35,7 +38,7 @@ add_action('plugins_loaded', function ()
     /**
      * 升级数据库
      */
-    $installed_version = get_option('wprs_pinyin_slug_version', '1.4.13');
+    $installed_version = get_option('wprs_pinyin_slug_version', '2.0.0');
 
     if (version_compare($installed_version, WPRS_PS_VERSION) === -1) {
         $options = get_option('wprs_pinyin_slug');
@@ -49,6 +52,7 @@ add_action('plugins_loaded', function ()
         update_option('wprs_pinyin_slug_version', WPRS_PS_VERSION);
     }
 
+
     /**
      * 插件插件设置链接
      */
@@ -61,7 +65,13 @@ add_action('plugins_loaded', function ()
         return $links;
     });
 
+    $classes = [
+        \WenprisePinyinSlug\Settings::class,
+        \WenprisePinyinSlug\Integrate::class,
+        \WenprisePinyinSlug\BulkConvert::class,
+    ];
 
-    // 加载插件主要功能
-    require_once(plugin_dir_path(__FILE__) . 'vendor/autoload.php');
+    foreach ($classes as $class) {
+        new $class;
+    }
 });

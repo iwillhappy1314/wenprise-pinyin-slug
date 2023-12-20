@@ -23,7 +23,7 @@ function wprs_convert_chinese_filenames()
             $old_file_name = str_replace('.' . $extension, '', $file->getFilename());
             $old_post_name = sanitize_title($old_file_name);
 
-            $new_file_name = wprs_slug_convert($old_file_name);
+            $new_file_name = \WenprisePinyinSlug\Helpers::slug_convert($old_file_name);
             $new_file_name = preg_replace($file_name_preg, "", $new_file_name);
 
             $file_dir_path = str_replace($file->getFilename(), '', $file->getPath());

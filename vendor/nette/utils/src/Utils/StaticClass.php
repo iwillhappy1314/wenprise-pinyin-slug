@@ -5,8 +5,6 @@
  * Copyright (c) 2004 David Grudl (https://davidgrudl.com)
  */
 
-declare(strict_types=1);
-
 namespace Nette;
 
 
@@ -15,23 +13,22 @@ namespace Nette;
  */
 trait StaticClass
 {
+
 	/**
-	 * @return never
-	 * @throws \Error
+	 * @throws \LogicException
 	 */
 	final public function __construct()
 	{
-		throw new \Error('Class ' . static::class . ' is static and cannot be instantiated.');
+		throw new \LogicException('Class ' . get_class($this) . ' is static and cannot be instantiated.');
 	}
 
 
 	/**
 	 * Call to undefined static method.
-	 * @return void
 	 * @throws MemberAccessException
 	 */
-	public static function __callStatic(string $name, array $args)
+	public static function __callStatic($name, $args)
 	{
-		Utils\ObjectHelpers::strictStaticCall(static::class, $name);
+		Utils\ObjectHelpers::strictStaticCall(get_called_class(), $name);
 	}
 }

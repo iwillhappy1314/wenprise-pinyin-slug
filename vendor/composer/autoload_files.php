@@ -6,7 +6,6 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'a12da592622097d2b593a430e32e13fd' => $vendorDir . '/nette/utils/src/loader.php',
     'dc1275c308c5b416beb314b6317daca2' => $vendorDir . '/overtrue/pinyin/src/const.php',
-    'f4ff1c486b23a6150a36866b8b01281f' => $baseDir . '/src/settings.php',
-    '5d5d6c63749de2b255954f5a2e604747' => $baseDir . '/src/slug.php',
 );
