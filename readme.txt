@@ -1,4 +1,4 @@
-﻿# Plugin Name #
+﻿# Wenprise Pinyin Slug #
 Contributors: iwillhappy1314
 Donate link: https://www.wpzhiku.com/
 Tags: slug, Pinyin Attachment Name,Pinyin Slugs,Pinyin SEO,Pinyin Permalinks
