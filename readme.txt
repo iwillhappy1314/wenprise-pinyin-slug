@@ -3,9 +3,9 @@ Contributors: iwillhappy1314
 Donate link: https://www.wpzhiku.com/
 Tags: slug, pinyin,别名,中文字符,Pinyin Attachment Name,Pinyin Slugs,Pinyin SEO,Pinyin Permalinks,gutenberg, blocks
 Requires at least: 3.4
-Requires PHP: 5.6.0
+Requires PHP: 7.1.0
 Tested up to: 6.2
-Stable tag: 1.5.6
+Stable tag: 3.0.0
 Domain Path: languages
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -60,6 +60,10 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 3. 文件名自动转换
 
 ## Changelog ##
+
+### 3.0.0 ###
+* PHP 版本要求提高到 7.1.0
+* 移除没有使用的依赖库
 
 ### 1.5.4 ###
 * update test up
