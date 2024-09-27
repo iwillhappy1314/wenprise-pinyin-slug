@@ -63,6 +63,7 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 ### 3.1.0 ###
 * Bugfix, 解决新版古滕堡编辑器保存文章时多次进行拼音转换的问题
+* PHP 版本要求提高到 7.4
 
 ### 3.0.0 ###
 * PHP 版本要求提高到 7.1.0
