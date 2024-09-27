@@ -11,7 +11,7 @@
 class SlugTest extends WP_UnitTestCase
 {
 
-    function setUp()
+    function setUp():void
     {
         // Call the setup method on the parent or the factory objects won't be loaded!
         parent::setUp();
