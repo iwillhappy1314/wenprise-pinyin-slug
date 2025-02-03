@@ -2,7 +2,7 @@
   "name": "wenprise/pinyin-slug",
   "description": "Convert Chinese post, taxonomy tag, uploaded filename to pinyin in WordPress.",
   "require": {
-    "php": ">=7.1",
+    "php": ">=7.4",
     "overtrue/pinyin": "^4.0",
     "tareq1988/wordpress-settings-api-class": "^1.2"
   },
@@ -23,5 +23,10 @@
     "preferred-install": {
       "*": "dist"
     }
+  },
+  "require-dev": {
+    "yoast/phpunit-polyfills": "^1.0",
+    "phpunit/phpunit": "^7.5 || ^8.5",
+    "wp-cli/wp-cli-bundle": "*"
   }
 }
