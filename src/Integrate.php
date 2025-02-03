@@ -66,7 +66,7 @@ class Integrate {
 			$slug = Helpers::slug_convert( $_POST[ 'tag-name' ], 'term' );
 		}
 
-		return $slug;
+		return sanitize_title($slug);
 	}
 
 
