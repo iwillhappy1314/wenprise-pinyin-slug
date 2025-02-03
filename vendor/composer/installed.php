@@ -3,7 +3,7 @@
         'name' => 'wenprise/pinyin-slug',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => '1dff28ddff0a1cb85775386b0265040921a3659e',
+        'reference' => '4072d08a7d8959029e1dd7d81e62dd32bb1d5796',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -31,7 +31,7 @@
         'wenprise/pinyin-slug' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => '1dff28ddff0a1cb85775386b0265040921a3659e',
+            'reference' => '4072d08a7d8959029e1dd7d81e62dd32bb1d5796',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

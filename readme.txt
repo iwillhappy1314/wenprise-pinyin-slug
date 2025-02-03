@@ -5,7 +5,7 @@ Tags: slug, Pinyin Attachment Name,Pinyin Slugs,Pinyin SEO,Pinyin Permalinks
 Requires at least: 3.4
 Requires PHP: 7.1.0
 Tested up to: 6.6
-Stable tag: 3.0.0
+Stable tag: 3.1.1
 Domain Path: languages
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -60,6 +60,12 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 3. 文件名自动转换
 
 ## Changelog ##
+### 3.1.1 ###
+* 解决分类名称为英文时，不调用 sanitize_title 的问题
+
+### 3.1.0 ###
+* Bugfix, 解决新版古滕堡编辑器保存文章时多次进行拼音转换的问题
+* PHP 版本要求提高到 7.4
 
 ### 3.0.0 ###
 * PHP 版本要求提高到 7.1.0
