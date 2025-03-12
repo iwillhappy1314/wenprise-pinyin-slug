@@ -27,18 +27,40 @@ class Integrate {
 	 *
 	 * @return mixed|string
 	 */
-	function wp_unique_post_slug( $slug, $post_ID, $post_status, $post_type, $post_parent, $original_slug ) {
-		// 在这里不处理附件别名
-		if ( $post_type === 'attachment' ) {
+	function wp_unique_post_slug($slug, $post_ID, $post_status, $post_type, $post_parent, $original_slug) {
+		// 1. 在这里不处理附件别名
+		if (empty($slug) || $post_type === 'attachment') {
 			return $slug;
 		}
 
-		// 如果当前状态为已发布时，不触发
-		$old_status = get_post_field( 'post_status', $post_ID, 'edit' );
+		// 2. 获取旧状态，添加错误处理
+		$old_status = get_post_field('post_status', $post_ID, 'edit');
+		if (is_wp_error($old_status)) {
+			error_log('Failed to get post status: ' . $old_status->get_error_message());
+			return $slug;
+		}
 
-		// 原文章状态为已发布，新文章状态为已发布，也就是发布文章时，才执行转换操作
-		if ( $old_status !== 'publish' && $post_status === 'publish' ) {
-			return Helpers::slug_convert( $slug );
+		// 3. 扩展状态检查逻辑
+		$convert_status = false;
+		
+		// 3.1 处理从非公开到公开的转换
+		if ($post_status === 'publish' && !in_array($old_status, ['publish', 'future'])) {
+			$convert_status = true;
+		}
+		
+		// 3.2 处理定时发布
+		if ($old_status === 'future' && $post_status === 'publish') {
+			$convert_status = true;
+		}
+		
+		// 3.3 处理从回收站恢复
+		if ($old_status === 'trash' && $post_status !== 'trash') {
+			$convert_status = true;
+		}
+
+		// 4. 执行转换
+		if ($convert_status) {
+			return Helpers::slug_convert($slug);
 		}
 
 		return $slug;

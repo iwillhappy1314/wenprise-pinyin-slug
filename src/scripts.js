@@ -1,18 +1,20 @@
 jQuery(document).ready(function($) {
 
     function wprs_pinyin_slug_check_select() {
-        var check_el = $('select[name="wprs_pinyin_slug[translator_api]"]').val(),
-            check_el2 = $('select[name="wprs_pinyin_slug[type]"]').val(),
-            condition_el = $(
-                'input[name="wprs_pinyin_slug[baidu_app_id]"], input[name="wprs_pinyin_slug[baidu_api_key]"]').
-                parent().
-                parent();
+        var selected_type = $('select[name="wprs_pinyin_slug[type]"]').val(),
+            baidu_translate_el = $('input[name="wprs_pinyin_slug[baidu_app_id]"], input[name="wprs_pinyin_slug[baidu_api_key]"]').parent().parent();
+        var deepseek_el = $('input[name="wprs_pinyin_slug[deepseek_api_key]"]').parent().parent();
+        var type = parseInt(selected_type);
 
-        // 根据是否需要发票显示
-        if (parseInt(check_el) === 0 || parseInt(check_el2) !== 2) {
-            condition_el.hide();
+        if (type === 2) {
+            baidu_translate_el.show();
+            deepseek_el.hide();
+        } else if(type === 3) {
+            baidu_translate_el.hide();
+            deepseek_el.show();
         } else {
-            condition_el.show();
+            baidu_translate_el.hide();
+            deepseek_el.hide();
         }
     }
 

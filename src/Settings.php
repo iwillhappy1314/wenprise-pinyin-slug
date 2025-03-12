@@ -93,6 +93,7 @@ class Settings {
 						0 => '拼音全拼',
 						1 => '拼音首字母',
 						2 => '百度翻译',
+						3 => 'DeepSeek AI 生成',
 					],
 				],
 
@@ -130,6 +131,14 @@ class Settings {
 					'type'              => 'text',
 					'sanitize_callback' => 'sanitize_text_field',
 				],
+
+                [
+                    'name'              => 'deepseek_api_key',
+                    'label'             => __( 'DeepSeek API 密钥', 'wprs' ),
+                    'desc'              => __( '请在Deepseek开放平台获取：', 'wprs' ) . 'https://platform.deepseek.com/api_keys',
+                    'type'              => 'text',
+                    'sanitize_callback' => 'sanitize_text_field',
+                ],
 
 				[
 					'name'              => 'disable_file_convert',
